@@ -4,8 +4,12 @@ import de.whoopwh00p.taskapp.model.Task;
 import de.whoopwh00p.taskapp.persistence.TaskRepository;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.PathVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.List;
 
 @Controller("/tasks")
 public class TaskController {
@@ -25,11 +29,14 @@ public class TaskController {
         return this.taskRepository.findAll();
     }
 
-    @Get("/addTask")
-    public Task addTask() {
-        Task task = new Task();
-        task.setName("TaskName");
-        task.setCompleted(true);
-        return taskRepository.save(task);
+    @Get("/getByName/{taskName}")
+    public List<Task> getByName(@PathVariable String taskName) {
+        try {
+            return Collections.singletonList(taskRepository.findByName(taskName));
+        } catch (Exception e)
+        {
+            LOGGER.warn("Didn't find Task with Name {}", taskName, e);
+            return Collections.emptyList();
+        }
     }
 }

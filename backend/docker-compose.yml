@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  task-db:
+    image: mysql:5.7
+    volumes:
+      - ./dbscripts:/docker-entrypoint-initdb.d
+    restart: always
+    ports:
+     - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: task-user
+      MYSQL_PASSWORD: password
+volumes:
+  db_data: {}
