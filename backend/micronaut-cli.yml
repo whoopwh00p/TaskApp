@@ -1,5 +1,5 @@
 profile: service
-defaultPackage: hello.world
+defaultPackage: task.app
 ---
 testFramework: junit
 sourceLanguage: java

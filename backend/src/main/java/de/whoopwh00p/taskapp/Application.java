@@ -1,4 +1,4 @@
-package hello.world;
+package de.whoopwh00p.taskapp;
 
 import io.micronaut.runtime.Micronaut;
 
