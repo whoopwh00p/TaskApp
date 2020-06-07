@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { MessageService } from './message.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
+import { AuthService } from './auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,11 +18,13 @@ export class HeroService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
-  constructor(private http: HttpClient, private messageService: MessageService) { }
+  constructor(private http: HttpClient, private messageService: MessageService,  private authService: AuthService) { }
 
   getHeroes(): Observable<Hero[]> {
     this.messageService.add('HeroService: fetched heroes');
-    return this.http.get<Hero[]>(this.heroesUrl)
+    return this.http.get<Hero[]>(this.heroesUrl, {
+      headers:new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)
+    })
    .pipe(
      tap(_ => this.log('fetched heroes')),
      catchError(this.handleError<Hero[]>('getHeroes', []))
