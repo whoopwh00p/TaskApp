@@ -106,6 +106,12 @@
             <version>1.18.12</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-security-jwt</artifactId>
+            <version>2.0.0.M2</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
@@ -203,6 +209,11 @@
                                 <groupId>io.micronaut.data</groupId>
                                 <artifactId>micronaut-data-processor</artifactId>
                                 <version>1.0.2</version>
+                            </path>
+                            <path>
+                                <groupId>io.micronaut</groupId>
+                                <artifactId>micronaut-security-jwt</artifactId>
+                                <version>2.0.0.M2</version>
                             </path>
                         </annotationProcessorPaths>
                     </configuration>

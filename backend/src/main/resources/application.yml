@@ -1,6 +1,15 @@
 micronaut:
   application:
     name: task-app
+  security:
+    enabled: true
+    token:
+      jwt:
+        enabled: false #set to true, to enable secured endpoints
+        signatures:
+          jwks:
+            auth0:
+              url: 'https://dev-cd3cebbk.eu.auth0.com/.well-known/jwks.json'
 
 datasources:
   default:

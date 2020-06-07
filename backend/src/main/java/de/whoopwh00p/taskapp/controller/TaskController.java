@@ -6,9 +6,13 @@ import io.micronaut.data.exceptions.EmptyResultException;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.authentication.Authentication;
+import io.micronaut.security.rules.SecurityRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.security.PermitAll;
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
@@ -28,14 +32,16 @@ public class TaskController {
 
     @Get("/findAll")
     @Transactional
+    @PermitAll
     public Iterable<Task> findAll() {
         LOGGER.debug("findAll invoked.");
         return this.taskRepository.findAll();
     }
 
     @Get("/findByName/{taskName}")
-    public List<Task> findByName(@PathVariable String taskName) {
-        LOGGER.debug("findByName invoked.");
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public List<Task> findByName(@PathVariable String taskName, Authentication authentication) {
+        LOGGER.info("findByName invoked. {}", authentication);
         try {
             return Collections.singletonList(taskRepository.findByName(taskName));
         } catch (EmptyResultException e)
