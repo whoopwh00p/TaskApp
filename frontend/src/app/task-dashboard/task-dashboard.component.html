@@ -1,0 +1,42 @@
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">TODO</th>
+        <th scope="col">In Progress</th>
+        <th scope="col">Done</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let task of tasks[1]">
+        <td>{{task.id}}</td>
+        <td>{{task.name}}</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3">  
+           <ul>
+               <li *ngFor="let task of tasks[0]">
+                    {{task.name}}
+               </li>
+           </ul>>
+        </div>
+        <div class="col-sm-3">
+            <ul>
+                <li *ngFor="let task of tasks[1]">
+                     {{task.name}}
+                </li>
+            </ul>>
+        </div>
+        <div class="col-sm-3"> 
+            <ul>
+                <li *ngFor="let task of tasks[2]">
+                     <span >{{task.name}}></span>
+                </li>
+            </ul>>
+        </div>
+     </div>
+ </div>
