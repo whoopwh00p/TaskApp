@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Task } from '../model/Task';
 import { TaskService } from '../task.service';
+import { State } from '../model/State';
 
 @Component({
   selector: 'app-task-dashboard',
@@ -10,12 +11,13 @@ import { TaskService } from '../task.service';
 export class TaskDashboardComponent implements OnInit {
 
   public tasks: Task[];
-  public states: number[];
+  public states: State[];
+  public displayedRows:number;
 
   constructor(private taskService: TaskService) { }
 
   ngOnInit(): void {
-    this.states = new Array<number>();
+    this.states = new Array<State>();
     this.tasks = this.taskService.getTasks();
 
     for(let task of this.tasks) {
@@ -23,10 +25,11 @@ export class TaskDashboardComponent implements OnInit {
         this.states.push(task.state);
       }
     }
-    this.states.sort((a,b) => a-b);
+    this.states.sort((a,b) => a.getId()-b.getId());
+    this.displayedRows = Math.floor(12/this.states.length);
   }
 
-  filterTask(task: Task, state:number){
+  filterTask(task: Task, state:State){
     return task.state == state;
   }
 }
