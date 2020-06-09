@@ -9,17 +9,24 @@ import { TaskService } from '../task.service';
 })
 export class TaskDashboardComponent implements OnInit {
 
-  public tasks: Task[][];
+  public tasks: Task[];
+  public states: number[];
 
   constructor(private taskService: TaskService) { }
 
   ngOnInit(): void {
-    for(let i in this.taskService.getTasks())
-    {
-      console.log(i);
-      let task = this.taskService.getTasks()[i];
-      this.tasks[task.state][i] = task;
+    this.states = new Array<number>();
+    this.tasks = this.taskService.getTasks();
+
+    for(let task of this.tasks) {
+      if(!this.states.includes(task.state)) {
+        this.states.push(task.state);
+      }
     }
+    this.states.sort((a,b) => a-b);
   }
 
+  filterTask(task: Task, state:number){
+    return task.state == state;
+  }
 }
