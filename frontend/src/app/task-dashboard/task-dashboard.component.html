@@ -1,10 +1,10 @@
-<div class="container-fluid">
-      <div ngClass="col-lg-{{displayedRows}}" *ngFor="let state of states">  
-        <p>{{state}}</p>
-        <ul>
-          <li *ngFor="let task of tasks | taskfilter: state">
-            {{task.name}}
-          </li>
-        </ul>
-      </div>
-</div>
+<mat-grid-list cols="{{states.length}}">
+  <mat-grid-tile  *ngFor="let state of states">
+    <mat-grid-tile-header>state</mat-grid-tile-header>
+      <mat-list style="width: 100%;">
+        <mat-list-item (click)="open(task)" *ngFor="let task of tasks | taskfilter: state" style="width: 100%; margin:5px; background-color: cadetblue;">
+              <p matLine >{{task.name}}</p>
+        </mat-list-item>
+      </mat-list>
+    </mat-grid-tile>
+ </mat-grid-list>

@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Task } from '../model/Task';
 import { TaskService } from '../task.service';
 import { State } from '../model/State';
-
+import {MatDialog} from '@angular/material/dialog';
+import { TaskdialogComponent } from '../taskdialog/taskdialog.component';
 @Component({
   selector: 'app-task-dashboard',
   templateUrl: './task-dashboard.component.html',
@@ -14,7 +15,7 @@ export class TaskDashboardComponent implements OnInit {
   public states: State[];
   public displayedRows:number;
 
-  constructor(private taskService: TaskService) { }
+  constructor(private taskService: TaskService,public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.states = new Array<State>();
@@ -31,5 +32,15 @@ export class TaskDashboardComponent implements OnInit {
 
   filterTask(task: Task, state:State){
     return task.state == state;
+  }
+
+  open(task: Task) {
+    const dialogRef = this.dialog.open(TaskdialogComponent, {
+      width: '800px',
+      data: task
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+    });
   }
 }
