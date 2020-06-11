@@ -32,14 +32,14 @@ public class TaskController {
 
     @Get("/findAll")
     @Transactional
-    @PermitAll
+//    @PermitAll
     public Iterable<Task> findAll() {
         LOGGER.debug("findAll invoked.");
         return this.taskRepository.findAll();
     }
 
     @Get("/findByName/{taskName}")
-    @Secured(SecurityRule.IS_AUTHENTICATED)
+//    @Secured(SecurityRule.IS_AUTHENTICATED)
     public List<Task> findByName(@PathVariable String taskName, Authentication authentication) {
         LOGGER.info("findByName invoked. {}", authentication);
         try {
