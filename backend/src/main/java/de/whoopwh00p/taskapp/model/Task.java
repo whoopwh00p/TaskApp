@@ -2,6 +2,7 @@ package de.whoopwh00p.taskapp.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
 import javax.persistence.*;
 
 @Data
@@ -14,17 +15,13 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
-    @Schema(description = "The project that the task belongs to")
     private Project project;
 
-    @Schema(description = "The name of the task", example = "eat pizza")
     private String name;
 
-    @Schema(description = "the detailed description of the task", example = "the pizza has to be eaten")
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Schema(description = "the state of the task", example = "TODO")
     private TaskState state;
 }
 

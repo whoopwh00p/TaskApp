@@ -1,6 +1,5 @@
 package de.whoopwh00p.taskapp.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -13,10 +12,10 @@ public class Project {
     @GeneratedValue
     private int id;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
     private Set<Task> tasks;
 
-    @ManyToMany(mappedBy = "projects")
+    @ManyToMany(mappedBy = "projects", fetch = FetchType.EAGER)
     private Set<User> users;
 
     @ManyToOne
