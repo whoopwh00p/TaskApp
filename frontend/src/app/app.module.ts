@@ -16,6 +16,8 @@ import { MessagesComponent } from './messages/messages.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HeroSearchComponent } from './hero-search/hero-search.component';
 import { CallbackComponent } from './callback.component';
+import { TaskDashboardComponent } from './task-dashboard/task-dashboard.component';
+import { TaskfilterPipe } from './taskfilter.pipe';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,9 @@ import { CallbackComponent } from './callback.component';
     MessagesComponent,
     DashboardComponent,
     HeroSearchComponent,
-    CallbackComponent
+    CallbackComponent,
+    TaskDashboardComponent,
+    TaskfilterPipe
   ],
   imports: [
     BrowserModule,
