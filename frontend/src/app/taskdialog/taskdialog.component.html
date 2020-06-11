@@ -3,4 +3,6 @@
   {{task.description}}
 </div>
 <div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">No Thanks</button>
+  <button mat-button [mat-dialog-close]="task">Ok</button>
 </div>

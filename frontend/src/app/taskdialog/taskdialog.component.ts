@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject, Input } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { Task } from '../model/Task';
+import { State } from '../model/State';
 
 @Component({
   selector: 'app-taskdialog',
@@ -12,9 +13,6 @@ export class TaskdialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<TaskdialogComponent>,
     @Inject(MAT_DIALOG_DATA) public task: Task) {
-      console.log("open");
-      console.log(task);
-      console.log(this.task);
     }
 
   onNoClick(): void {
@@ -22,6 +20,6 @@ export class TaskdialogComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.task.state = State.IN_PROGRESS;
   }
-
 }

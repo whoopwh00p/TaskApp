@@ -1,6 +1,10 @@
+<li *ngIf="task">
+  You chose: <i>{{task.name}} {{task.state}}</i>
+</li>
+
 <mat-grid-list cols="{{states.length}}">
   <mat-grid-tile  *ngFor="let state of states">
-    <mat-grid-tile-header>state</mat-grid-tile-header>
+    <mat-grid-tile-header>{{state}}</mat-grid-tile-header>
       <mat-list style="width: 100%;">
         <mat-list-item (click)="open(task)" *ngFor="let task of tasks | taskfilter: state" style="width: 100%; margin:5px; background-color: cadetblue;">
               <p matLine >{{task.name}}</p>
