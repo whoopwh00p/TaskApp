@@ -1,0 +1,8 @@
+<h1 mat-dialog-title>{{task.id}}: {{task.name}}</h1>
+<div mat-dialog-content>
+  {{task.description}}
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">No Thanks</button>
+  <button mat-button [mat-dialog-close]="task">Ok</button>
+</div>

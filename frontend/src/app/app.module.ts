@@ -18,7 +18,9 @@ import { HeroSearchComponent } from './hero-search/hero-search.component';
 import { CallbackComponent } from './callback.component';
 import { TaskDashboardComponent } from './task-dashboard/task-dashboard.component';
 import { TaskfilterPipe } from './taskfilter.pipe';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from './material.module';
+import { TaskdialogComponent } from './taskdialog/taskdialog.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -29,7 +31,8 @@ import { TaskfilterPipe } from './taskfilter.pipe';
     HeroSearchComponent,
     CallbackComponent,
     TaskDashboardComponent,
-    TaskfilterPipe
+    TaskfilterPipe,
+    TaskdialogComponent
   ],
   imports: [
     BrowserModule,
@@ -39,6 +42,8 @@ import { TaskfilterPipe } from './taskfilter.pipe';
       InMemoryDataService, { dataEncapsulation: false }
     ),
     FormsModule,
+    MaterialModule,
+    BrowserAnimationsModule
   ],
   providers: [
     AuthService
