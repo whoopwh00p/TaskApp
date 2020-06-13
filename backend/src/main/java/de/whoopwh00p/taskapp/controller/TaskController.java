@@ -71,12 +71,34 @@ public class TaskController {
             parameters = {
                     @Parameter(in = ParameterIn.PATH, name = "projectId", description = "the id of the project", required = true, example = "1"),
             })
-    @ApiResponse(responseCode = "200", description = "The created task", content = @Content(schema = @Schema(implementation = Task.class)))
+    @ApiResponse(responseCode = "200", description = "The created task", content = @Content(schema = @Schema(implementation = TaskResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "Given project-id does not exist")
     public HttpResponse<TaskResponseDto> createTask(@PathVariable int projectId, @Body @Valid TaskDto taskDto) {
         try {
             Task task = taskRepository.save(mapToTask(taskDto, projectId));
             return HttpResponse.ok(mapToTaskResponseDto(task));
+        } catch (Exception e) {
+            LOGGER.warn("Could not save task", e);
+            return HttpResponse.badRequest();
+        }
+    }
+
+    @Put("/{id}")
+    @Operation(summary = "updates a task",
+            description = "updates a task",
+            parameters = {
+                    @Parameter(in = ParameterIn.PATH, name = "projectId", description = "the id of the project. " +
+                            "If this id is not equal to the original task-id, the task will be transferred to the new project", required = true, example = "1"),
+                    @Parameter(in = ParameterIn.PATH, name = "id", description = "the id of the task", required = true, example = "1"),
+            })
+    @ApiResponse(responseCode = "200", description = "The updated task", content = @Content(schema = @Schema(implementation = TaskResponseDto.class)))
+    @ApiResponse(responseCode = "400", description = "Given project-id does not exist")
+    public HttpResponse<TaskResponseDto> updateTask(@PathVariable int projectId, @PathVariable int id, @Body @Valid TaskDto taskDto) {
+        try {
+            Task task = mapToTask(taskDto, projectId);
+            task.setId(id);
+            Task updatedTask = taskRepository.update(task);
+            return HttpResponse.ok(mapToTaskResponseDto(updatedTask));
         } catch (Exception e) {
             LOGGER.warn("Could not save task", e);
             return HttpResponse.badRequest();

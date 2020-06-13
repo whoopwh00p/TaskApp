@@ -74,6 +74,24 @@ public class UserController {
         }
     }
 
+    @Put("/{id}")
+    @Operation(summary = "updates a user",
+            description = "updates a user",
+            parameters = @Parameter(description = "the id of the user", example = "1"))
+    @ApiResponse(responseCode = "200", description = "The updated user", content = @Content(schema = @Schema(implementation = UserResponseDto.class)))
+    @ApiResponse(responseCode = "400", description = "Given owner-id does not exist")
+    public HttpResponse<UserResponseDto> updateUser(@PathVariable int id, @Body @Valid UserDto userDto) {
+        try {
+            User user = mapToUser(userDto);
+            user.setId(id);
+            User updatedUser = userRepository.update(user);
+            return HttpResponse.ok(mapToUserResponseDto(updatedUser));
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error occurred", e);
+            return HttpResponse.serverError();
+        }
+    }
+
     private User mapToUser(UserDto userDto) {
         User user = new User();
         user.setName(userDto.getName());

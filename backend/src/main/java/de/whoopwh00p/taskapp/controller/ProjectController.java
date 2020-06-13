@@ -81,6 +81,28 @@ public class ProjectController {
         }
     }
 
+    @Put("/{id}")
+    @Operation(summary = "updates a project",
+            description = "updates a project",
+            parameters = @Parameter(description = "the id of the project", example = "1"))
+    @ApiResponse(responseCode = "200", description = "The updated project", content = @Content(schema = @Schema(implementation = ProjectResponseDto.class)))
+    @ApiResponse(responseCode = "400", description = "Given owner-id does not exist")
+    @ApiResponse(responseCode = "500", description = "unexpected error occurred")
+    public HttpResponse<ProjectResponseDto> updateProject(@PathVariable int id, @Body @Valid ProjectDto projectDto) {
+        try {
+            Project project = mapToProject(projectDto);
+            project.setId(id);
+            Project updatedProject = projectRepository.update(project);
+            return HttpResponse.ok(mapToProjectResponseDto(updatedProject));
+        } catch (UnknownUserException e) {
+            LOGGER.warn("Could not save project", e);
+            return HttpResponse.badRequest();
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error occurred", e);
+            return HttpResponse.serverError();
+        }
+    }
+
     @Delete("/{id}")
     @Operation(summary = "deletes a project",
             description = "deletes the project with the given id",
@@ -114,7 +136,7 @@ public class ProjectController {
     }
 
     private ProjectResponseDto mapToProjectResponseDto(Project project) {
-        if(project == null) {
+        if (project == null) {
             return null;
         }
         ProjectResponseDto projectResponseDto = new ProjectResponseDto();
