@@ -2,7 +2,7 @@ micronaut:
   application:
     name: task-app
   security:
-    enabled: true
+    enabled: false
     token:
       jwt:
         enabled: false #set to true, to enable secured endpoints
@@ -10,6 +10,20 @@ micronaut:
           jwks:
             auth0:
               url: 'https://dev-cd3cebbk.eu.auth0.com/.well-known/jwks.json'
+  openapi:
+    views:
+      spec:
+        swagger-ui:
+          enabled: true
+          theme: flattop
+  router:
+    static-resources:
+      swagger:
+        paths: classpath:META-INF/swagger
+        mapping: /swagger/**
+      swagger-ui:
+        paths: classpath:META-INF/swagger/views/swagger-ui
+        mapping: /swagger-ui/**
 
 datasources:
   default:
@@ -17,6 +31,7 @@ datasources:
     username: ${JDBC_USER:sa}
     password: ${JDBC_PASSWORD:""}
     driverClassName: ${JDBC_DRIVER:org.h2.Driver}
+    dialect: org.hibernate.dialect.MySQL5Dialect
 
 jpa:
   default:
@@ -26,4 +41,4 @@ jpa:
       hibernate:
         hbm2ddl:
           auto: update
-        show_sql: true
+        show_sql: false
