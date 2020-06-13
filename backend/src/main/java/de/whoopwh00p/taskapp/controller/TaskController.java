@@ -44,6 +44,7 @@ public class TaskController {
             })
     @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = TaskResponseDto.class))))
     public HttpResponse<List<TaskResponseDto>> getTasks(@PathVariable int projectId) {
+        LOGGER.info("getTasks called");
         return HttpResponse.ok(mapToTaskResponseDtos(taskRepository.findByProjectId(projectId)));
     }
 
