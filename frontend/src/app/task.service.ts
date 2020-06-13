@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { catchError, map, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 import { Task } from './model/Task';
 import { State } from './model/State';
 
@@ -7,18 +10,39 @@ import { State } from './model/State';
 })
 
 export class TaskService {
-  TASKS: Task[] = [
-    { id: 1, name: 'Pizza essen' , description: 'Pizza essen und danach aufräumen', state: State.TODO}, 
-    { id: 2, name: 'Task 2' , description: 'Description 2', state: State.DONE}, 
-    { id: 3, name: 'Task 3' , description: 'Description 3', state: State.IN_PROGRESS}, 
-    { id: 4, name: 'Task 4' , description: 'Description 4', state: State.TODO}, 
-    { id: 5, name: 'Task 5' , description: 'Description 5', state: State.TODO},
-    { id: 6, name: 'Task 6' , description: 'Description 6', state: State.TODO},
-    { id: 7, name: 'Task 7' , description: 'Description 7', state: State.DONE}
-  ];
-  constructor() { }
 
-  getTasks(): Task[] {
-    return this.TASKS;
+  private baseUrl = 'http://localhost:8080';  
+
+  constructor(private http: HttpClient) { }
+
+  getTasks(): Observable<Task[]> {
+    return this.http.get<Task[]>(this.baseUrl+"/projects/1/tasks/")
+          .pipe(
+            tap(_ => this.log('fetched tasks')),
+            catchError(this.handleError<Task[]>('getTasks', []))
+          );
+  }
+  /**
+ * Handle Http operation that failed.
+ * Let the app continue.
+ * @param operation - name of the operation that failed
+ * @param result - optional value to return as the observable result
+ */
+private handleError<T>(operation = 'operation', result?: T) {
+  return (error: any): Observable<T> => {
+
+    // TODO: send the error to remote logging infrastructure
+    console.error(error); // log to console instead
+
+    // TODO: better job of transforming error for user consumption
+    this.log(`${operation} failed: ${error.message}`);
+
+    // Let the app keep running by returning an empty result.
+    return of(result as T);
+  }
+}
+
+  private log(message: string) {
+    console.log(message);
   }
 }

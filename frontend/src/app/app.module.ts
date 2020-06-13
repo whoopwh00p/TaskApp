@@ -3,9 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule }    from '@angular/common/http';
 
-import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-import { InMemoryDataService }  from './in-memory-data.service';
-
 import { AuthService } from './auth/auth.service';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -38,9 +35,6 @@ import { TaskdialogComponent } from './taskdialog/taskdialog.component';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    HttpClientInMemoryWebApiModule.forRoot(
-      InMemoryDataService, { dataEncapsulation: false }
-    ),
     FormsModule,
     MaterialModule,
     BrowserAnimationsModule

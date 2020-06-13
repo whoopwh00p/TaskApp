@@ -16,20 +16,29 @@ export class TaskDashboardComponent implements OnInit {
   public states: State[];
   public displayedRows:number;
   public task: Task;
+
+  
   constructor(private taskService: TaskService,public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.states = new Array<State>();
-    this.tasks = this.taskService.getTasks();
+    this.getTasks();
+  }
 
-    for(let task of this.tasks) {
-      if(!this.states.includes(task.state)) {
-        this.states.push(task.state);
-      }
-    }
-    this.states.sort((a,b) => a.getId()-b.getId());
-    this.displayedRows = Math.floor(12/this.states.length);
-   
+  getTasks(): void {
+    console.log("getTasks");
+    this.taskService.getTasks()
+      .subscribe(tasks =>{
+
+        this.tasks = tasks;
+        for(let task of this.tasks) {
+          if(!this.states.includes(task.state)) {
+            this.states.push(task.state);
+          }
+        }
+        this.states.sort((a,b) => a.getId()-b.getId());
+        this.displayedRows = Math.floor(12/this.states.length);
+      });
   }
 
   filterTask(task: Task, state:State){
