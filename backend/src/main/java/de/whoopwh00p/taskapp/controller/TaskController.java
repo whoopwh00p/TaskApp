@@ -1,6 +1,7 @@
 package de.whoopwh00p.taskapp.controller;
 
 import de.whoopwh00p.taskapp.controller.dto.TaskDto;
+import de.whoopwh00p.taskapp.controller.dto.TaskResponseDto;
 import de.whoopwh00p.taskapp.exception.UnknownProjectException;
 import de.whoopwh00p.taskapp.model.Task;
 import de.whoopwh00p.taskapp.persistence.ProjectRepository;
@@ -18,10 +19,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Controller("/tasks")
+@Controller("/projects/{projectId}/tasks")
 public class TaskController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskController.class);
@@ -36,36 +38,45 @@ public class TaskController {
 
     @Get
     @Operation(summary = "gets all tasks",
-            description = "gets all tasks")
-    @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Task.class))))
-    public HttpResponse<List<Task>> getTasks() {
-        return HttpResponse.ok((List<Task>) taskRepository.findAll());
+            description = "gets all tasks for a specific project",
+            parameters = {
+                    @Parameter(in = ParameterIn.PATH, name = "projectId", description = "the id of the project", required = true, example = "1"),
+            })
+    @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = TaskResponseDto.class))))
+    public HttpResponse<List<TaskResponseDto>> getTasks(@PathVariable int projectId) {
+        return HttpResponse.ok(mapToTaskResponseDtos(taskRepository.findByProjectId(projectId)));
     }
 
     @Get("/{id}")
     @Operation(summary = "get task by id",
             description = "gets a task by its id",
-            parameters = @Parameter(in = ParameterIn.PATH, name = "id", description = "the id of the task", required = true, example = "1"))
-    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Task.class)))
-    @ApiResponse(responseCode = "400", description = "Task does not exist")
-    public HttpResponse<Task> getTaskById(@PathVariable int id) {
-        Optional<Task> task = taskRepository.findById(id);
+            parameters = {
+                    @Parameter(in = ParameterIn.PATH, name = "projectId", description = "the id of the project", required = true, example = "1"),
+                    @Parameter(in = ParameterIn.PATH, name = "id", description = "the id of the task", required = true, example = "1")
+            })
+    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = TaskResponseDto.class)))
+    @ApiResponse(responseCode = "404", description = "Task or project does not exist")
+    public HttpResponse<TaskResponseDto> getTaskById(@PathVariable int projectId, @PathVariable int id) {
+        Optional<Task> task = taskRepository.findByProjectIdAndId(projectId, id);
         if (task.isPresent()) {
-            return HttpResponse.ok(task.get());
+            return HttpResponse.ok(mapToTaskResponseDto(task.get()));
         } else {
-            return HttpResponse.badRequest();
+            return HttpResponse.notFound();
         }
     }
 
     @Post
     @Operation(summary = "creates a new task",
-            description = "creates a new task")
+            description = "creates a new task",
+            parameters = {
+                    @Parameter(in = ParameterIn.PATH, name = "projectId", description = "the id of the project", required = true, example = "1"),
+            })
     @ApiResponse(responseCode = "200", description = "The created task", content = @Content(schema = @Schema(implementation = Task.class)))
     @ApiResponse(responseCode = "400", description = "Given project-id does not exist")
-    public HttpResponse<Task> createTask(@Body @Valid TaskDto taskDto) {
+    public HttpResponse<TaskResponseDto> createTask(@PathVariable int projectId, @Body @Valid TaskDto taskDto) {
         try {
-            Task task = taskRepository.save(mapToTask(taskDto));
-            return HttpResponse.ok(task);
+            Task task = taskRepository.save(mapToTask(taskDto, projectId));
+            return HttpResponse.ok(mapToTaskResponseDto(task));
         } catch (Exception e) {
             LOGGER.warn("Could not save task", e);
             return HttpResponse.badRequest();
@@ -75,12 +86,15 @@ public class TaskController {
     @Delete("/{id}")
     @Operation(summary = "deletes a task",
             description = "deletes the task with the given id",
-            parameters = @Parameter(in = ParameterIn.PATH, name = "id", description = "the id of the task", required = true, example = "1"))
+            parameters = {
+                    @Parameter(in = ParameterIn.PATH, name = "projectId", description = "the id of the project", required = true, example = "1"),
+                    @Parameter(in = ParameterIn.PATH, name = "id", description = "the id of the task", required = true, example = "1")
+            })
     @ApiResponse(responseCode = "200", description = "task was deleted")
     @ApiResponse(responseCode = "500", description = "unexpected error occurred")
-    public HttpResponse<String> deleteTask(@PathVariable Integer id) {
+    public HttpResponse<String> deleteTask(@PathVariable int projectId, @PathVariable Integer id) {
         try {
-            taskRepository.deleteById(id);
+            taskRepository.deleteByProjectIdAndId(projectId, id);
             return HttpResponse.ok();
         } catch (Exception e) {
             LOGGER.error("Unexpected error occurred", e);
@@ -88,10 +102,33 @@ public class TaskController {
         }
     }
 
-    private Task mapToTask(TaskDto taskDto) throws UnknownProjectException {
+    private Task mapToTask(TaskDto taskDto, int projectId) throws UnknownProjectException {
         Task task = new Task();
         task.setName(taskDto.getName());
-        task.setProject(projectRepository.findById(taskDto.getProjectId()).orElseThrow(() -> new UnknownProjectException("No project with this id exists")));
+        task.setProject(projectRepository.findById(projectId).orElseThrow(() -> new UnknownProjectException("No project with this id exists")));
+        task.setDescription(taskDto.getDescription());
+        task.setState(taskDto.getState());
         return task;
+    }
+
+    private List<TaskResponseDto> mapToTaskResponseDtos(List<Task> tasks) {
+        List<TaskResponseDto> taskResponseDtos = new ArrayList<>();
+        for (Task task : tasks) {
+            taskResponseDtos.add((mapToTaskResponseDto(task)));
+        }
+        return taskResponseDtos;
+    }
+
+    private TaskResponseDto mapToTaskResponseDto(Task task) {
+        if (task == null) {
+            return null;
+        }
+        TaskResponseDto taskResponseDto = new TaskResponseDto();
+        taskResponseDto.setId(task.getId());
+        taskResponseDto.setDescription(task.getDescription());
+        taskResponseDto.setName(task.getName());
+        taskResponseDto.setProjectId(task.getProject().getId());
+        taskResponseDto.setState(task.getState());
+        return taskResponseDto;
     }
 }

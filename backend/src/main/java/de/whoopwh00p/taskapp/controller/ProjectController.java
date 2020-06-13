@@ -1,10 +1,9 @@
 package de.whoopwh00p.taskapp.controller;
 
 import de.whoopwh00p.taskapp.controller.dto.ProjectDto;
+import de.whoopwh00p.taskapp.controller.dto.ProjectResponseDto;
 import de.whoopwh00p.taskapp.exception.UnknownUserException;
 import de.whoopwh00p.taskapp.model.Project;
-import de.whoopwh00p.taskapp.model.Task;
-import de.whoopwh00p.taskapp.model.User;
 import de.whoopwh00p.taskapp.persistence.ProjectRepository;
 import de.whoopwh00p.taskapp.persistence.TaskRepository;
 import de.whoopwh00p.taskapp.persistence.UserRepository;
@@ -21,12 +20,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-@Controller("/project")
+@Controller("/projects")
 public class ProjectController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProjectController.class);
 
@@ -43,21 +41,22 @@ public class ProjectController {
     @Get
     @Operation(summary = "gets all projects",
             description = "gets all projects")
-    @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Project.class))))
-    public HttpResponse<List<Project>> getProjects() {
-        return HttpResponse.ok((List<Project>) projectRepository.findAll());
+    @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProjectResponseDto.class))))
+    public HttpResponse<List<ProjectResponseDto>> getProjects() {
+        List<Project> projects = (List<Project>) projectRepository.findAll();
+        return HttpResponse.ok(mapToProjectResponseDtos(projects));
     }
 
     @Get("/{id}")
     @Operation(summary = "get project by id",
             description = "gets a project by its id",
             parameters = @Parameter(in = ParameterIn.PATH, name = "id", description = "the id of the project", required = true, example = "1"))
-    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Project.class)))
+    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ProjectResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "Project does not exist")
-    public HttpResponse<Project> getProjectById(@PathVariable int id) {
+    public HttpResponse<ProjectResponseDto> getProjectById(@PathVariable int id) {
         Optional<Project> project = projectRepository.findById(id);
         if (project.isPresent()) {
-            return HttpResponse.ok(project.get());
+            return HttpResponse.ok(mapToProjectResponseDto(project.get()));
         } else {
             return HttpResponse.badRequest();
         }
@@ -66,13 +65,13 @@ public class ProjectController {
     @Post
     @Operation(summary = "creates a new project",
             description = "creates a new project")
-    @ApiResponse(responseCode = "200", description = "The created project", content = @Content(schema = @Schema(implementation = Project.class)))
+    @ApiResponse(responseCode = "200", description = "The created project", content = @Content(schema = @Schema(implementation = ProjectResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "Given owner-id does not exist")
     @ApiResponse(responseCode = "500", description = "unexpected error occurred")
-    public HttpResponse<Project> createProject(@Body @Valid ProjectDto projectDto) {
+    public HttpResponse<ProjectResponseDto> createProject(@Body @Valid ProjectDto projectDto) {
         try {
             Project project = projectRepository.save(mapToProject(projectDto));
-            return HttpResponse.ok(project);
+            return HttpResponse.ok(mapToProjectResponseDto(project));
         } catch (UnknownUserException e) {
             LOGGER.warn("Could not save project", e);
             return HttpResponse.badRequest();
@@ -102,21 +101,27 @@ public class ProjectController {
         Project project = new Project();
         project.setName(projectDto.getName());
         project.setShortName(projectDto.getShortName());
-        if (projectDto.getUserIds() != null) {
-            Set<User> users = new HashSet<>();
-            for (Integer id : projectDto.getUserIds()) {
-                userRepository.findById(id).ifPresent(users::add);
-            }
-            project.setUsers(users);
-        }
-        if (projectDto.getTaskIds() != null) {
-            Set<Task> tasks = new HashSet<>();
-            for (Integer id : projectDto.getTaskIds()) {
-                taskRepository.findById(id).ifPresent(tasks::add);
-            }
-            project.setTasks(tasks);
-        }
         project.setOwner(userRepository.findById(projectDto.getOwnerId()).orElseThrow(() -> new UnknownUserException("No user with this id exists")));
         return project;
+    }
+
+    private List<ProjectResponseDto> mapToProjectResponseDtos(List<Project> projects) {
+        List<ProjectResponseDto> projectResponseDtos = new ArrayList<>();
+        for (Project project : projects) {
+            projectResponseDtos.add((mapToProjectResponseDto(project)));
+        }
+        return projectResponseDtos;
+    }
+
+    private ProjectResponseDto mapToProjectResponseDto(Project project) {
+        if(project == null) {
+            return null;
+        }
+        ProjectResponseDto projectResponseDto = new ProjectResponseDto();
+        projectResponseDto.setId(project.getId());
+        projectResponseDto.setName(project.getName());
+        projectResponseDto.setOwnerId(project.getOwner().getId());
+        projectResponseDto.setShortName(project.getShortName());
+        return projectResponseDto;
     }
 }
