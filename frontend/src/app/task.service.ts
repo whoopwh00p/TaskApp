@@ -3,7 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Observable, of, Subject } from 'rxjs';
 import { Task } from './model/Task';
-import { State } from './model/State';
+import { ProjectService } from './project.service';
+import { Project } from './model/Project';
 
 @Injectable({
   providedIn: 'root'
@@ -11,18 +12,25 @@ import { State } from './model/State';
 
 export class TaskService {
 
-  private taskUrl = 'http://localhost:8080/projects/1/tasks/';  
+  private baseUrl = 'http://localhost:8080/projects/';  
+  private path = '/tasks/'
+  private project: Project;
 
   private _refreshNeeded$ = new Subject<void>();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private projectService: ProjectService) { 
+    this.projectService.refreshNeeded$.subscribe(result => {
+      this.project = result;
+      this._refreshNeeded$.next();
+    })
+  }
 
   get refreshNeeded$() {
     return this._refreshNeeded$;
   }
 
   getTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(this.taskUrl)
+    return this.http.get<Task[]>(this.baseUrl+this.project.id+this.path)
           .pipe(
             tap(_ => this.log('fetched tasks')),
             catchError(this.handleError<Task[]>('getTasks', []))
@@ -30,7 +38,7 @@ export class TaskService {
   }
 
   createTask(task:Task) {
-    this.http.post<Task>(this.taskUrl, {
+    this.http.post<Task>(this.baseUrl+this.project.id+this.path, {
       'name': task.name,
       'description': task.description,
       'state': task.state.toString()
@@ -44,7 +52,7 @@ export class TaskService {
   }
 
   updateTask(task:Task) {
-    this.http.put<Task>(this.taskUrl+task.id, {
+    this.http.put<Task>(this.baseUrl+this.project.id+this.path+task.id, {
       'name': task.name,
       'description': task.description,
       'state': task.state.toString()
