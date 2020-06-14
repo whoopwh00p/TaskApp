@@ -18,8 +18,8 @@ import { TaskfilterPipe } from './taskfilter.pipe';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
 import { TaskdialogComponent } from './taskdialog/taskdialog.component';
-import { CreateTaskComponent } from './create-task/create-task.component';
 import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from '@angular/material/form-field';
+import { EditTaskComponent } from './edit-task/edit-task.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,8 +32,7 @@ import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from '@angular/material/form-field';
     TaskDashboardComponent,
     TaskfilterPipe,
     TaskdialogComponent,
-    CreateTaskComponent,
-
+    EditTaskComponent,
   ],
   imports: [
     BrowserModule,
