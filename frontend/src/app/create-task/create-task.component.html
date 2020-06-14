@@ -1,0 +1,21 @@
+<div >
+    <form [formGroup]="form">
+        <mat-form-field appearance="standard">
+            <mat-label>Task Name</mat-label>
+            <input matInput placeholder="enter a task name" formControlName="taskName">
+        </mat-form-field>
+        <br>
+        <mat-form-field appearance="standard">
+            <mat-label>Description</mat-label>
+            <textarea matInput placeholder="enter a description" formControlName="taskDescription"></textarea>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>State</mat-label>
+            <mat-select formControlName="taskState">
+              <mat-option *ngFor="let state of states" [value]="state">
+                {{state}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+    </form>
+</div>

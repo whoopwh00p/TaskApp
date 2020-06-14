@@ -36,7 +36,6 @@ export class TaskDashboardComponent implements OnInit {
             this.states.push(task.state);
           }
         }
-        this.states.sort((a,b) => a.getId()-b.getId());
         this.displayedRows = Math.floor(12/this.states.length);
       });
   }
