@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import {State} from '../model/State';
 import { TaskService } from '../task.service';
 import { Task } from '../model/Task';
+import {MatDialogRef} from "@angular/material/dialog";
+
 
 @Component({
   selector: 'app-create-task',
@@ -17,7 +19,7 @@ export class CreateTaskComponent implements OnInit {
 
   states:State[] = [State.TODO,State.IN_PROGRESS,State.DONE];
 
-  constructor(private formBuilder: FormBuilder, private taskService: TaskService) { 
+  constructor(private formBuilder: FormBuilder, private dialogRef: MatDialogRef<CreateTaskComponent>, private taskService: TaskService) { 
     this.defaultTask = {
       'id': 0,
       'name': '',
@@ -32,7 +34,11 @@ export class CreateTaskComponent implements OnInit {
 
   createTask(): void {
     this.taskService.createTask(this.form.value);
-    this.form.reset(this.defaultTask);
+    this.close();
+  }
+
+  close(): void {
+    this.dialogRef.close();
   }
 
 }
