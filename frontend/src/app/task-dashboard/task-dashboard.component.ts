@@ -4,7 +4,7 @@ import { TaskService } from '../task.service';
 import { State } from '../model/State';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import { TaskdialogComponent } from '../taskdialog/taskdialog.component';
-import { CreateTaskComponent } from '../create-task/create-task.component';
+import { EditTaskComponent } from '../edit-task/edit-task.component';
 @Component({
   selector: 'app-task-dashboard',
   templateUrl: './task-dashboard.component.html',
@@ -13,7 +13,7 @@ import { CreateTaskComponent } from '../create-task/create-task.component';
 export class TaskDashboardComponent implements OnInit {
 
   public tasks: Task[];
-  public states: State[];
+  public states:State[] = [State.TODO,State.IN_PROGRESS,State.DONE];
   public displayedRows:number;
   public task: Task;
 
@@ -21,47 +21,34 @@ export class TaskDashboardComponent implements OnInit {
   constructor(private taskService: TaskService,public dialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.states = new Array<State>();
     this.taskService.refreshNeeded$.subscribe(() => {
       this.getTasks();
     });
     this.getTasks();
+    this.displayedRows = Math.floor(12/this.states.length);
+    console.log("opjaisd");
+    console.log(this.states);
   }
 
   getTasks(): void {
     console.log("getTasks");
     this.taskService.getTasks()
       .subscribe(tasks =>{
-
         this.tasks = tasks;
-        for(let task of this.tasks) {
-          if(!this.states.includes(task.state)) {
-            this.states.push(task.state);
-          }
-        }
-        this.displayedRows = Math.floor(12/this.states.length);
       });
   }
 
-  filterTask(task: Task, state:State){
-    return task.state == state;
-  }
-
   open(task: Task) {
-    const dialogRef = this.dialog.open(TaskdialogComponent, {
-      width: '800px',
-      data: task
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
-    });
+    const config = new MatDialogConfig();
+    config.width = "80%";
+    config.data = task;
+    const dialogRef = this.dialog.open(EditTaskComponent, config);
   }
 
   openCreateTaskDialog() {
     const config = new MatDialogConfig();
     config.width = "80%";
     config.disableClose = true;
-    const dialogRef = this.dialog.open(CreateTaskComponent, config);
+    const dialogRef = this.dialog.open(EditTaskComponent, config);
   }
 }

@@ -96,6 +96,7 @@ public class TaskController {
     @ApiResponse(responseCode = "200", description = "The updated task", content = @Content(schema = @Schema(implementation = TaskResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "Given project-id does not exist")
     public HttpResponse<TaskResponseDto> updateTask(@PathVariable int projectId, @PathVariable int id, @Body @Valid TaskDto taskDto) {
+        LOGGER.info("update Task called {}, {}", id,taskDto);
         try {
             Task task = mapToTask(taskDto, projectId);
             task.setId(id);

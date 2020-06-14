@@ -12,7 +12,6 @@ import { State } from './model/State';
 export class TaskService {
 
   private taskUrl = 'http://localhost:8080/projects/1/tasks/';  
-  private tasks: Task[];
 
   private _refreshNeeded$ = new Subject<void>();
 
@@ -41,9 +40,21 @@ export class TaskService {
         this._refreshNeeded$.next();
       }),
       catchError(this.handleError<Task>('create task'))
-    ).subscribe(result => {
-      this.tasks.push(result)
-    });
+    ).subscribe();
+  }
+
+  updateTask(task:Task) {
+    this.http.put<Task>(this.taskUrl+task.id, {
+      'name': task.name,
+      'description': task.description,
+      'state': task.state.toString()
+    }).pipe(
+      tap(_ => {
+        this.log('update task');
+        this._refreshNeeded$.next();
+      }),
+      catchError(this.handleError<Task>('update task'))
+    ).subscribe();
   }
 
   /**
