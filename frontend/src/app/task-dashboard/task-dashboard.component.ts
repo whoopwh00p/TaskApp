@@ -22,6 +22,9 @@ export class TaskDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.states = new Array<State>();
+    this.taskService.refreshNeeded$.subscribe(() => {
+      this.getTasks();
+    });
     this.getTasks();
   }
 

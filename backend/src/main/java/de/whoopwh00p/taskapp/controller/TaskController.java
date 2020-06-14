@@ -76,6 +76,7 @@ public class TaskController {
     @ApiResponse(responseCode = "400", description = "Given project-id does not exist")
     public HttpResponse<TaskResponseDto> createTask(@PathVariable int projectId, @Body @Valid TaskDto taskDto) {
         try {
+            LOGGER.info("createTask called");
             Task task = taskRepository.save(mapToTask(taskDto, projectId));
             return HttpResponse.ok(mapToTaskResponseDto(task));
         } catch (Exception e) {

@@ -1,21 +1,27 @@
-<div >
-    <form [formGroup]="form">
-        <mat-form-field appearance="standard">
-            <mat-label>Task Name</mat-label>
-            <input matInput placeholder="enter a task name" formControlName="taskName">
-        </mat-form-field>
-        <br>
-        <mat-form-field appearance="standard">
-            <mat-label>Description</mat-label>
-            <textarea matInput placeholder="enter a description" formControlName="taskDescription"></textarea>
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>State</mat-label>
-            <mat-select formControlName="taskState">
-              <mat-option *ngFor="let state of states" [value]="state">
-                {{state}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-    </form>
-</div>
+<h1>Create a new task</h1>
+<form [formGroup]="form" (ngSubmit)="createTask()">
+    <p>
+      <mat-form-field appearance="standard">
+        <mat-label>Task Name</mat-label>
+        <input matInput placeholder="enter a task name" formControlName="name">
+    </mat-form-field>
+    </p>
+    <p>
+    <mat-form-field appearance="standard">
+        <mat-label>Description</mat-label>
+        <textarea matInput placeholder="enter a description" formControlName="description"></textarea>
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field>
+        <mat-label>State</mat-label>
+        <mat-select formControlName="state">
+          <mat-option *ngFor="let state of states" [value]="state">
+            {{state}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </p> 
+      <button mat-raised-button type="submit" color="primary">Create Task</button>
+      <button mat-raised-button type="reset" color="warn">Clear</button>
+</form>
