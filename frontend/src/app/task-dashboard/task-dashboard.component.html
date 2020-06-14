@@ -1,7 +1,5 @@
-<li *ngIf="task">
-  You chose: <i>{{task.name}} {{task.state}}</i>
-</li>
-
+<button mat-raised-button type="button" color="primary" (click)="openCreateTaskDialog()">Create new task</button>
+<br/><br/>
 <mat-grid-list cols="{{states.length}}">
   <mat-grid-tile  *ngFor="let state of states">
     <mat-grid-tile-header>{{state}}</mat-grid-tile-header>

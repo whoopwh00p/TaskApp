@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Task } from '../model/Task';
 import { TaskService } from '../task.service';
 import { State } from '../model/State';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import { TaskdialogComponent } from '../taskdialog/taskdialog.component';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { CreateTaskComponent } from '../create-task/create-task.component';
 @Component({
   selector: 'app-task-dashboard',
   templateUrl: './task-dashboard.component.html',
@@ -22,6 +22,9 @@ export class TaskDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.states = new Array<State>();
+    this.taskService.refreshNeeded$.subscribe(() => {
+      this.getTasks();
+    });
     this.getTasks();
   }
 
@@ -36,7 +39,6 @@ export class TaskDashboardComponent implements OnInit {
             this.states.push(task.state);
           }
         }
-        this.states.sort((a,b) => a.getId()-b.getId());
         this.displayedRows = Math.floor(12/this.states.length);
       });
   }
@@ -54,6 +56,12 @@ export class TaskDashboardComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       console.log(result);
     });
+  }
 
+  openCreateTaskDialog() {
+    const config = new MatDialogConfig();
+    config.width = "80%";
+    config.disableClose = true;
+    const dialogRef = this.dialog.open(CreateTaskComponent, config);
   }
 }

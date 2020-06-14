@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { Task } from './model/Task';
 import { State } from './model/State';
 
@@ -11,17 +11,41 @@ import { State } from './model/State';
 
 export class TaskService {
 
-  private baseUrl = 'http://localhost:8080';  
+  private taskUrl = 'http://localhost:8080/projects/1/tasks/';  
+  private tasks: Task[];
+
+  private _refreshNeeded$ = new Subject<void>();
 
   constructor(private http: HttpClient) { }
 
+  get refreshNeeded$() {
+    return this._refreshNeeded$;
+  }
+
   getTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(this.baseUrl+"/projects/1/tasks/")
+    return this.http.get<Task[]>(this.taskUrl)
           .pipe(
             tap(_ => this.log('fetched tasks')),
             catchError(this.handleError<Task[]>('getTasks', []))
           );
   }
+
+  createTask(task:Task) {
+    this.http.post<Task>(this.taskUrl, {
+      'name': task.name,
+      'description': task.description,
+      'state': task.state.toString()
+    }).pipe(
+      tap(_ => {
+        this.log('create task');
+        this._refreshNeeded$.next();
+      }),
+      catchError(this.handleError<Task>('create task'))
+    ).subscribe(result => {
+      this.tasks.push(result)
+    });
+  }
+
   /**
  * Handle Http operation that failed.
  * Let the app continue.
