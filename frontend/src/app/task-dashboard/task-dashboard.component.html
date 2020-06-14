@@ -1,12 +1,14 @@
 <button mat-raised-button type="button" color="primary" (click)="openCreateTaskDialog()">Create a new task</button>
 <br/><br/>
-<mat-grid-list cols="{{states.length}}">
-  <mat-grid-tile  *ngFor="let state of states">
-    <mat-grid-tile-header>{{state}}</mat-grid-tile-header>
-      <mat-list style="width: 100%;">
-        <mat-list-item (click)="open(task)" *ngFor="let task of tasks | taskfilter: state" style="width: 100%; margin:5px; background-color: cadetblue;">
-              <p matLine >{{task.name}}</p>
-        </mat-list-item>
-      </mat-list>
-    </mat-grid-tile>
- </mat-grid-list>
+<div *ngIf="tasks">
+  <mat-grid-list cols="{{states.length}}">
+    <mat-grid-tile  *ngFor="let state of states">
+      <mat-grid-tile-header>{{state}}</mat-grid-tile-header>
+        <mat-list style="width: 100%;">
+          <mat-list-item (click)="open(task)" *ngFor="let task of tasks | taskfilter: state" style="width: 100%; margin:5px; background-color: cadetblue;">
+                <p matLine >[{{projectShortName}}-{{task.id}}] {{task.name}}</p>
+          </mat-list-item>
+        </mat-list>
+      </mat-grid-tile>
+  </mat-grid-list>
+</div>

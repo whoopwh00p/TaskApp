@@ -5,6 +5,8 @@ import { State } from '../model/State';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import { TaskdialogComponent } from '../taskdialog/taskdialog.component';
 import { EditTaskComponent } from '../edit-task/edit-task.component';
+import { ProjectService } from '../project.service';
+import { Project } from '../model/Project';
 @Component({
   selector: 'app-task-dashboard',
   templateUrl: './task-dashboard.component.html',
@@ -16,18 +18,18 @@ export class TaskDashboardComponent implements OnInit {
   public states:State[] = [State.TODO,State.IN_PROGRESS,State.DONE];
   public displayedRows:number;
   public task: Task;
-
+  public projectShortName: String;
   
-  constructor(private taskService: TaskService,public dialog: MatDialog) { }
+  constructor(private taskService: TaskService,private projectService: ProjectService,public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.taskService.refreshNeeded$.subscribe(() => {
       this.getTasks();
     });
-    this.getTasks();
+    this.projectService.refreshNeeded$.subscribe(() => {
+      this.projectShortName = this.projectService.getSelectedProject().shortName;
+    });
     this.displayedRows = Math.floor(12/this.states.length);
-    console.log("opjaisd");
-    console.log(this.states);
   }
 
   getTasks(): void {

@@ -20,6 +20,7 @@ import { MaterialModule } from './material.module';
 import { TaskdialogComponent } from './taskdialog/taskdialog.component';
 import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from '@angular/material/form-field';
 import { EditTaskComponent } from './edit-task/edit-task.component';
+import { ProjectDashboardComponent } from './project-dashboard/project-dashboard.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,6 +34,7 @@ import { EditTaskComponent } from './edit-task/edit-task.component';
     TaskfilterPipe,
     TaskdialogComponent,
     EditTaskComponent,
+    ProjectDashboardComponent,
   ],
   imports: [
     BrowserModule,

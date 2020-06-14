@@ -8,7 +8,10 @@ import { State } from './model/State';
 export class TaskfilterPipe implements PipeTransform {
 
   transform(tasks: Task[], state: State): any {
-    return tasks.filter(task => task.state == state);
+    if(tasks != null) {
+      return tasks.filter(task => task.state == state);
+    }
+    return;
   }
 
 }
