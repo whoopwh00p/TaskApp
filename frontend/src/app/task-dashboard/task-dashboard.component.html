@@ -1,14 +1,24 @@
-<button mat-raised-button type="button" color="primary" (click)="openCreateTaskDialog()">Create a new task</button>
-<br/><br/>
+
 <div *ngIf="tasks">
-  <mat-grid-list cols="{{states.length}}">
-    <mat-grid-tile  *ngFor="let state of states">
-      <mat-grid-tile-header>{{state}}</mat-grid-tile-header>
-        <mat-list style="width: 100%;">
-          <mat-list-item (click)="open(task)" *ngFor="let task of tasks | taskfilter: state" style="width: 100%; margin:5px; background-color: cadetblue;">
-                <p matLine >[{{projectShortName}}-{{task.id}}] {{task.name}}</p>
-          </mat-list-item>
-        </mat-list>
-      </mat-grid-tile>
-  </mat-grid-list>
+  <button mat-raised-button type="button" color="primary" (click)="openCreateTaskDialog()">Create a new task</button>
+  <br/><br/>
+  <div cdkDropListGroup>
+    <div class="state-container" *ngFor="let state of states">
+      <h2>{{state}}</h2>
+      <div
+      cdkDropList
+      [cdkDropListData]="state"
+      class="state-list"
+      (cdkDropListDropped)="drop($event)">
+          <div 
+          cdkDrag 
+          [cdkDragData]="task" 
+          class="state-box" 
+          *ngFor="let task of tasks| taskfilter: state" 
+          (click)="open(task)">
+            [{{projectShortName}}-{{task.id}}] {{task.name}}
+          </div>
+      </div>
+    </div>
+  </div>
 </div>
