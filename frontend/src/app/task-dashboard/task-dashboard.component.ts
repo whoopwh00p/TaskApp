@@ -7,6 +7,8 @@ import { TaskdialogComponent } from '../taskdialog/taskdialog.component';
 import { EditTaskComponent } from '../edit-task/edit-task.component';
 import { ProjectService } from '../project.service';
 import { Project } from '../model/Project';
+import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+
 @Component({
   selector: 'app-task-dashboard',
   templateUrl: './task-dashboard.component.html',
@@ -38,6 +40,15 @@ export class TaskDashboardComponent implements OnInit {
       .subscribe(tasks =>{
         this.tasks = tasks;
       });
+  }
+
+  drop(event: CdkDragDrop<State>) {
+    let draggedTask: Task = event.item.data;
+    let targetState: State = event.container.data;
+    if(draggedTask.state != targetState) {
+      draggedTask.state = targetState;
+      this.taskService.updateTask(draggedTask);
+    }
   }
 
   open(task: Task) {
