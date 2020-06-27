@@ -1,7 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule }    from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import { CookieService } from 'ngx-cookie-service';
 
 import { AuthService } from './auth/auth.service';
 
@@ -48,6 +49,7 @@ import { ProjectDashboardComponent } from './project-dashboard/project-dashboard
   providers: [
     AuthService,
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },
+    CookieService
   ],
   bootstrap: [AppComponent]
 })

@@ -25,6 +25,7 @@
     "auth0-js": "^9.13.2",
     "bootstrap": "^4.5.0",
     "jquery": "^3.5.1",
+    "ngx-cookie-service": "^3.0.4",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
