@@ -8,11 +8,6 @@ import { AuthService } from './auth/auth.service';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HeroesComponent } from './heroes/heroes.component';
-import { HeroDetailComponent } from './hero-detail/hero-detail.component';
-import { MessagesComponent } from './messages/messages.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { HeroSearchComponent } from './hero-search/hero-search.component';
 import { CallbackComponent } from './callback.component';
 import { TaskDashboardComponent } from './task-dashboard/task-dashboard.component';
 import { TaskfilterPipe } from './taskfilter.pipe';
@@ -25,11 +20,6 @@ import { ProjectDashboardComponent } from './project-dashboard/project-dashboard
 @NgModule({
   declarations: [
     AppComponent,
-    HeroesComponent,
-    HeroDetailComponent,
-    MessagesComponent,
-    DashboardComponent,
-    HeroSearchComponent,
     CallbackComponent,
     TaskDashboardComponent,
     TaskfilterPipe,

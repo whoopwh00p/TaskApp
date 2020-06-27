@@ -1,7 +1,5 @@
 <h1>{{title}}</h1>
 <nav>
-  <a routerLink="/dashboard">Dashboard</a>
-  <a routerLink="/heroes">Heroes</a>
   <ul class="nav navbar-nav navbar-right">
     <li>
       <a *ngIf="!authService.isLoggedIn" (click)="authService.login()">Log In</a>
@@ -15,4 +13,3 @@
 <app-project-dashboard></app-project-dashboard>
 <br>
 <app-task-dashboard></app-task-dashboard>
-<app-messages></app-messages>
