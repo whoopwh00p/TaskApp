@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ProjectService } from '../project.service';
 import { Project } from '../model/Project';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-project-dashboard',
@@ -11,18 +12,33 @@ import { Project } from '../model/Project';
 export class ProjectDashboardComponent implements OnInit {
 
   public projects: Project[];
-  public selectedProject;
+  public selectedProject : Project;
 
-  constructor(private projectService: ProjectService) { }
+  constructor(private projectService: ProjectService, private cookieService : CookieService) { }
 
   ngOnInit(): void {
     this.projectService.getProjects().subscribe(result => {
-      this.projects = result
-      this.selectedProject = this.projects[0];
+      this.projects = result;
+      this.setDefaultSelectedProject();
     });
   }
 
-  submit(): void {
+  selectProject(): void {
     this.projectService.setSelectedProject(this.selectedProject);
+  }
+
+  setDefaultSelectedProject() : void {
+    let selectedProjectId : Number = parseInt(this.cookieService.get('selected-project'));
+    this.selectedProject = this.findProjectById(selectedProjectId);
+    this.selectProject();
+  }
+
+  private findProjectById(id:Number) : Project {
+    for(let project of this.projects) {
+      if(project.id == id) {
+        return project;
+      }
+    }
+    return this.projects[0];
   }
 }

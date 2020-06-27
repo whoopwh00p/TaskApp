@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Observable, of, Subject } from 'rxjs';
 import { Project } from './model/Project';
+import { CookieService } from 'ngx-cookie-service';
 
 
 @Injectable({
@@ -15,7 +16,7 @@ export class ProjectService {
   private _refreshNeeded$ = new Subject<Project>();
   private selectedProject: Project;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private cookieService : CookieService) { }
 
   get refreshNeeded$() {
     return this._refreshNeeded$;
@@ -31,6 +32,7 @@ export class ProjectService {
 
   setSelectedProject(project: Project): void {
     this.selectedProject = project;
+    this.cookieService.set('selected-project', this.selectedProject.id.toString());
     this._refreshNeeded$.next(project);
   }
 
