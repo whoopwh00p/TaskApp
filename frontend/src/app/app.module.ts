@@ -16,7 +16,8 @@ import { MaterialModule } from './material.module';
 import { TaskdialogComponent } from './taskdialog/taskdialog.component';
 import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from '@angular/material/form-field';
 import { EditTaskComponent } from './edit-task/edit-task.component';
-import { ProjectDashboardComponent } from './project-dashboard/project-dashboard.component';
+import { GreetingComponent } from './greeting/greeting.component';
+import { ActionBarComponent } from './action-bar/action-bar.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -25,7 +26,8 @@ import { ProjectDashboardComponent } from './project-dashboard/project-dashboard
     TaskfilterPipe,
     TaskdialogComponent,
     EditTaskComponent,
-    ProjectDashboardComponent,
+    GreetingComponent,
+    ActionBarComponent,
   ],
   imports: [
     BrowserModule,

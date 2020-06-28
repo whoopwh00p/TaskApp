@@ -1,0 +1,11 @@
+<div class="container-fluid">
+    <mat-form-field appearance="standard" class="max-width" >
+        <mat-label >Project</mat-label>
+        <mat-select required [(ngModel)]="selectedProject" (selectionChange)="selectProject()">
+            <mat-option *ngFor="let project of projects" [value]="project">
+            {{project.name}}
+            </mat-option>
+        </mat-select>
+        </mat-form-field> 
+    <button class="max-width" mat-raised-button type="button" (click)="openCreateTaskDialog()">Create a new task</button>
+</div>

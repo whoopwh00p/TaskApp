@@ -3,18 +3,20 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ProjectService } from '../project.service';
 import { Project } from '../model/Project';
 import { CookieService } from 'ngx-cookie-service';
-
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import { TaskdialogComponent } from '../taskdialog/taskdialog.component';
+import { EditTaskComponent } from '../edit-task/edit-task.component';
 @Component({
-  selector: 'app-project-dashboard',
-  templateUrl: './project-dashboard.component.html',
-  styleUrls: ['./project-dashboard.component.css']
+  selector: 'app-action-bar',
+  templateUrl: './action-bar.component.html',
+  styleUrls: ['./action-bar.component.css']
 })
-export class ProjectDashboardComponent implements OnInit {
+export class ActionBarComponent implements OnInit {
 
   public projects: Project[];
   public selectedProject : Project;
 
-  constructor(private projectService: ProjectService, private cookieService : CookieService) { }
+  constructor(private projectService: ProjectService, private cookieService : CookieService,public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.projectService.getProjects().subscribe(result => {
@@ -31,6 +33,13 @@ export class ProjectDashboardComponent implements OnInit {
     let selectedProjectId : Number = parseInt(this.cookieService.get('selected-project'));
     this.selectedProject = this.findProjectById(selectedProjectId);
     this.selectProject();
+  }
+
+  openCreateTaskDialog() {
+    const config = new MatDialogConfig();
+    config.width = "80%";
+    config.disableClose = true;
+    const dialogRef = this.dialog.open(EditTaskComponent, config);
   }
 
   private findProjectById(id:Number) : Project {

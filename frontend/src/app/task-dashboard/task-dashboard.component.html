@@ -1,10 +1,7 @@
 <div class="container-fluid">
-    <div *ngIf="tasks" style="background-color: aqua;">
-      <button mat-raised-button type="button" color="primary" (click)="openCreateTaskDialog()">Create a new task</button>
-    </div>
-      <div cdkDropListGroup style="background-color: aquamarine;">
-        <div class="state-container" *ngFor="let state of states">
-          <h2>{{state}}</h2>
+      <div cdkDropListGroup>
+        <div class="state-container" style="text-align: center;" *ngFor="let state of states">
+          <h3>{{state}}</h3>
           <div
           cdkDropList
           [cdkDropListData]="state"

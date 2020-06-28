@@ -1,16 +1,24 @@
-<div class="container-fluid content">
-  <div class="row">
-    <nav class="nav-bar-right">
-          <a *ngIf="!authService.isLoggedIn" (click)="authService.login()">Log In</a>
-          <a (click)="authService.logout()">Log Out</a>
-    </nav>
-</div>
-<div class="row">
-  <div class="col-md-2">
-    <app-project-dashboard></app-project-dashboard>
-  </div>
+<div class="container-fluid">
+  <div class="row no-gutters">
+    <div class="col-md-2">
+      <span class="title">{{title}}</span>
+    </div>
     <div class="col-md-10">
-      <app-task-dashboard></app-task-dashboard>
+      <div class="right-align">
+        <app-greeting></app-greeting>
+      </div>
+    </div>
   </div>
-</div>
+  <div class="row">
+    <div class="col-md-2 flex-wrap">
+      <div class="h-100 dark-grey-blue">
+        <app-action-bar></app-action-bar>
+      </div>
+    </div>
+      <div class="col-md-10">
+        <div class="h-100 dark-grey-blue">
+          <app-task-dashboard></app-task-dashboard>
+        </div>
+    </div>
+  </div>
 </div>
