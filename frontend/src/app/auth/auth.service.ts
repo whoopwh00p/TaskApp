@@ -23,7 +23,12 @@ export class AuthService {
   authenticated: boolean;
 
   constructor(private router: Router) {
+    console.log("Constructor");
     this.getAccessToken();
+  }
+
+  getUserName() {
+    return this.userProfile.email;
   }
 
   login() {
@@ -46,6 +51,7 @@ export class AuthService {
 
   getAccessToken() {
     this.auth0.checkSession({}, (err, authResult) => {
+
       if (authResult && authResult.accessToken) {
         this.getUserInfo(authResult);
       }
@@ -55,6 +61,7 @@ export class AuthService {
   getUserInfo(authResult) {
     // Use access token to retrieve user's profile and set session
     this.auth0.client.userInfo(authResult.accessToken, (err, profile) => {
+      console.log(profile.email);
       if (profile) {
         this._setSession(authResult, profile);
       }

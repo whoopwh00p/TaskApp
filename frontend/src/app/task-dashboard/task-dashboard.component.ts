@@ -57,11 +57,4 @@ export class TaskDashboardComponent implements OnInit {
     config.data = task;
     const dialogRef = this.dialog.open(EditTaskComponent, config);
   }
-
-  openCreateTaskDialog() {
-    const config = new MatDialogConfig();
-    config.width = "80%";
-    config.disableClose = true;
-    const dialogRef = this.dialog.open(EditTaskComponent, config);
-  }
 }

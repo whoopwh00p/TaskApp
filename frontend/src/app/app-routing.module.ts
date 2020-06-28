@@ -4,7 +4,7 @@ import { AuthGuard } from './auth/auth.guard';
 import { CallbackComponent } from './callback.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  { path: '', redirectTo: '/', pathMatch: 'full' },
   { path: 'callback', component: CallbackComponent }
 ];
 
