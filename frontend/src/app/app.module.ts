@@ -19,6 +19,8 @@ import { EditTaskComponent } from './edit-task/edit-task.component';
 import { GreetingComponent } from './greeting/greeting.component';
 import { ActionBarComponent } from './action-bar/action-bar.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { LoginComponent } from './login/login.component';
+import { ContentComponent } from './content/content.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,6 +32,8 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
     GreetingComponent,
     ActionBarComponent,
     ConfirmDialogComponent,
+    LoginComponent,
+    ContentComponent
   ],
   imports: [
     BrowserModule,
