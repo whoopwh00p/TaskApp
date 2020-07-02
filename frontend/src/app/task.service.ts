@@ -65,6 +65,16 @@ export class TaskService {
     ).subscribe();
   }
 
+  deleteTask(task:Task) {
+    this.http.delete<Task>(this.baseUrl+this.project.id+this.path+task.id).pipe(
+      tap(_ => {
+        this.log('delete task');
+        this._refreshNeeded$.next();
+      }),
+      catchError(this.handleError<Task>('delete task'))
+    ).subscribe();
+  }
+
   /**
  * Handle Http operation that failed.
  * Let the app continue.

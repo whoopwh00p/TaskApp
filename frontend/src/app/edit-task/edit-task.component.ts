@@ -5,6 +5,8 @@ import { TaskService } from '../task.service';
 import { Task } from '../model/Task';
 import {MAT_DIALOG_DATA,MatDialogRef} from "@angular/material/dialog";
 
+import { ConfirmDialogModel, ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-edit-task',
@@ -19,7 +21,7 @@ export class EditTaskComponent implements OnInit {
   task: Task;
   states:State[] = [State.TODO,State.IN_PROGRESS,State.DONE];
 
-  constructor(private formBuilder: FormBuilder, private dialogRef: MatDialogRef<EditTaskComponent>, @Inject(MAT_DIALOG_DATA) data, private taskService: TaskService) { 
+  constructor(private formBuilder: FormBuilder, private dialogRef: MatDialogRef<EditTaskComponent>, @Inject(MAT_DIALOG_DATA) data, private taskService: TaskService, public dialog: MatDialog) { 
     if(data == null) {
       this.task = {
         'id': 0,
@@ -62,6 +64,25 @@ export class EditTaskComponent implements OnInit {
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  delete(): void {
+    const message = "Are you sure you want to delete task #"+this.task.id+"?";
+ 
+    const dialogData = new ConfirmDialogModel("Confirm Action", message);
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      id: "confirm1",
+      maxWidth: "400px",
+      data: dialogData
+    });
+    dialogRef.afterClosed().subscribe(shouldDelete => {
+      if(shouldDelete) {
+        console.log("delete task");
+        this.taskService.deleteTask(this.form.value);
+        this.close();
+      } 
+    });
+
   }
 
 }

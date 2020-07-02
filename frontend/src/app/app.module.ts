@@ -18,6 +18,7 @@ import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from '@angular/material/form-field';
 import { EditTaskComponent } from './edit-task/edit-task.component';
 import { GreetingComponent } from './greeting/greeting.component';
 import { ActionBarComponent } from './action-bar/action-bar.component';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,6 +29,7 @@ import { ActionBarComponent } from './action-bar/action-bar.component';
     EditTaskComponent,
     GreetingComponent,
     ActionBarComponent,
+    ConfirmDialogComponent,
   ],
   imports: [
     BrowserModule,

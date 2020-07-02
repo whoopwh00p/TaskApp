@@ -3,10 +3,8 @@ import { Task } from '../model/Task';
 import { TaskService } from '../task.service';
 import { State } from '../model/State';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
-import { TaskdialogComponent } from '../taskdialog/taskdialog.component';
 import { EditTaskComponent } from '../edit-task/edit-task.component';
 import { ProjectService } from '../project.service';
-import { Project } from '../model/Project';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 
 @Component({
@@ -55,6 +53,8 @@ export class TaskDashboardComponent implements OnInit {
     const config = new MatDialogConfig();
     config.width = "80%";
     config.data = task;
+    config.disableClose = true;
+    config.id="editTask1";
     const dialogRef = this.dialog.open(EditTaskComponent, config);
   }
 }
