@@ -23,8 +23,7 @@ export class AuthService {
   authenticated: boolean;
 
   constructor(private router: Router) {
-    console.log("Constructor");
-    this.getAccessToken();
+    this.checkSession();
   }
 
   getUserName() {
@@ -45,13 +44,13 @@ export class AuthService {
       } else if (err) {
         console.error(`Error: ${err.error}`);
       }
-      this.router.navigate(['/']);
+      this.router.navigate(['dashboard']);
     });
   }
 
-  getAccessToken() {
-    this.auth0.checkSession({}, (err, authResult) => {
+  checkSession() {
 
+    this.auth0.checkSession({}, (err, authResult) => {
       if (authResult && authResult.accessToken) {
         this.getUserInfo(authResult);
       }
@@ -61,7 +60,6 @@ export class AuthService {
   getUserInfo(authResult) {
     // Use access token to retrieve user's profile and set session
     this.auth0.client.userInfo(authResult.accessToken, (err, profile) => {
-      console.log(profile.email);
       if (profile) {
         this._setSession(authResult, profile);
       }
@@ -81,7 +79,6 @@ export class AuthService {
     // Ensure that returnTo URL is specified in Auth0
     // Application settings for Allowed Logout URLs
     this.auth0.logout({
-      returnTo: 'http://localhost:4200',
       clientID: environment.auth.clientID
     });
   }
@@ -89,6 +86,10 @@ export class AuthService {
   get isLoggedIn(): boolean {
     // Check if current date is before token
     // expiration and user is signed in locally
+    if(this.expiresAt ===  undefined || this.authenticated === undefined)
+    {
+      return false;
+    }
     return Date.now() < this.expiresAt && this.authenticated;
   }
 

@@ -14,7 +14,6 @@ import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
   styleUrls: ['./edit-task.component.css']
 })
 export class EditTaskComponent implements OnInit {
-
   dialogTypeEnum = DialogType;
   form: FormGroup;
   dialogType: DialogType;
