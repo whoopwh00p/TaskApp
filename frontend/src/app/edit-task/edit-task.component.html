@@ -1,13 +1,16 @@
+<div class="right">
+  <button mat-fab color="primary" (click)="close()"><mat-icon>close</mat-icon></button>
+</div>
 <div [ngSwitch]="dialogType">
     <h1 *ngSwitchCase="dialogTypeEnum.NEW">Create a new task</h1>
-    <h1 *ngSwitchCase="dialogTypeEnum.EDIT">Edit task</h1>
+    <h1 *ngSwitchCase="dialogTypeEnum.EDIT">Edit task #{{task.id}}</h1>
 </div>
 
 <form [formGroup]="form" (ngSubmit)="submit()">
     <p>
       <mat-form-field appearance="standard" style="width: 80%;">
         <mat-label>Task Name</mat-label>
-        <input required matInput placeholder="enter a task name" formControlName="name">
+        <input required matInput placeholder="enter a task name" formControlName="name" cdkFocusInitial>
     </mat-form-field>
     </p>
     <p>
@@ -26,6 +29,6 @@
         </mat-select>
       </mat-form-field>
     </p> 
-      <button mat-raised-button type="button" color="warn" (click)="close()">Close</button>
-      <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid">Save</button>
+      <button *ngIf="dialogType==dialogTypeEnum.EDIT" mat-raised-button color="warn" type="button" (click)="delete()">Delete</button>
+      <button class="right" mat-raised-button type="submit" color="primary" [disabled]="!form.valid">Save</button>
 </form>
