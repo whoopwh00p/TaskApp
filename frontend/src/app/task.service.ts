@@ -5,6 +5,7 @@ import { Observable, of, Subject } from 'rxjs';
 import { Task } from './model/Task';
 import { ProjectService } from './project.service';
 import { Project } from './model/Project';
+import { AuthService } from './auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class TaskService {
 
   private _refreshNeeded$ = new Subject<void>();
 
-  constructor(private http: HttpClient, private projectService: ProjectService) { 
+  constructor(private http: HttpClient, private projectService: ProjectService, private authService: AuthService) { 
     this.projectService.refreshNeeded$.subscribe(result => {
       this.project = result;
       this._refreshNeeded$.next();
@@ -30,7 +31,10 @@ export class TaskService {
   }
 
   getTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(this.baseUrl+this.project.id+this.path)
+    return this.http.get<Task[]>(this.baseUrl+this.project.id+this.path,
+      {
+        headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.getAccessToken()}`)
+      })
           .pipe(
             tap(_ => this.log('fetched tasks')),
             catchError(this.handleError<Task[]>('getTasks', []))
@@ -42,6 +46,8 @@ export class TaskService {
       'name': task.name,
       'description': task.description,
       'state': task.state.toString()
+    }, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.getAccessToken()}`)
     }).pipe(
       tap(_ => {
         this.log('create task');

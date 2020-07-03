@@ -1,5 +1,6 @@
 package de.whoopwh00p.taskapp.controller;
 
+import com.nimbusds.jwt.JWTClaimsSet;
 import de.whoopwh00p.taskapp.controller.dto.ProjectDto;
 import de.whoopwh00p.taskapp.controller.dto.ProjectResponseDto;
 import de.whoopwh00p.taskapp.exception.UnknownUserException;
@@ -7,8 +8,13 @@ import de.whoopwh00p.taskapp.model.Project;
 import de.whoopwh00p.taskapp.persistence.ProjectRepository;
 import de.whoopwh00p.taskapp.persistence.TaskRepository;
 import de.whoopwh00p.taskapp.persistence.UserRepository;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.authentication.AuthenticationRequest;
+import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.security.token.jwt.validator.AuthenticationJWTClaimsSetAdapter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -20,11 +26,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Controller("/projects")
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class ProjectController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProjectController.class);
 
@@ -42,7 +50,8 @@ public class ProjectController {
     @Operation(summary = "gets all projects",
             description = "gets all projects")
     @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProjectResponseDto.class))))
-    public HttpResponse<List<ProjectResponseDto>> getProjects() {
+    public HttpResponse<List<ProjectResponseDto>> getProjects(Principal principal) {
+        LOGGER.info("Principal {}", principal.getName());
         List<Project> projects = (List<Project>) projectRepository.findAll();
         return HttpResponse.ok(mapToProjectResponseDtos(projects));
     }

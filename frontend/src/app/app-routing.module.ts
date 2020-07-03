@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './auth/auth.guard';
 import { CallbackComponent } from './callback.component';
 import { LoginComponent } from './login/login.component';
-import { TaskDashboardComponent } from './task-dashboard/task-dashboard.component';
 import { ContentComponent } from './content/content.component';
 
 const routes: Routes = [

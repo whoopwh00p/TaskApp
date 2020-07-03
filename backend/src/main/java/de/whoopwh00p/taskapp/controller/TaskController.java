@@ -8,6 +8,8 @@ import de.whoopwh00p.taskapp.persistence.ProjectRepository;
 import de.whoopwh00p.taskapp.persistence.TaskRepository;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller("/projects/{projectId}/tasks")
+@Secured(SecurityRule.IS_ANONYMOUS)
 public class TaskController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskController.class);
@@ -67,6 +70,7 @@ public class TaskController {
     }
 
     @Post
+    @Secured(SecurityRule.IS_AUTHENTICATED)
     @Operation(summary = "creates a new task",
             description = "creates a new task",
             parameters = {

@@ -2,10 +2,10 @@ micronaut:
   application:
     name: task-app
   security:
-    enabled: false
+    enabled: true
     token:
       jwt:
-        enabled: false #set to true, to enable secured endpoints
+        enabled: true
         signatures:
           jwks:
             auth0:
