@@ -32,7 +32,7 @@ public class Task {
     private User creator;
 
     @ManyToOne
-    @JoinColumn(name = "reviser_id")
-    private User reviser;
+    @JoinColumn(name = "assignee_id")
+    private User assignee;
 }
 

@@ -21,7 +21,7 @@ export class UserService {
   constructor(private http: HttpClient, private authService: AuthService) { 
   }
 
-  getUser(): Observable<User[]> {
+  getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.baseUrl+this.path,
       {
         headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)

@@ -23,18 +23,32 @@ public class TaskService {
         this.userRepository = userRepository;
     }
 
-    public Task createTask(Task task, String userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
+    public Task createTask(Task task, String creatorId, String assigneeId) {
+        task.setCreator(findUserById(creatorId));
+        task.setAssignee(findUserById(assigneeId));
+        return taskRepository.save(task);
+    }
+
+    public Task updateTask(Task task, String assigneeId) {
+        task.setAssignee(findUserById(assigneeId));
+        task.setCreator(taskRepository.findById(task.getId()).map(Task::getCreator).orElse(null));
+        return taskRepository.update(task);
+    }
+
+    private User findUserById(String id) {
+        if(id == null || id.isEmpty()) {
+            return null;
+        }
+        Optional<User> optionalUser = userRepository.findById(id);
         User user;
         if(optionalUser.isPresent()) {
             user = optionalUser.get();
         } else {
             User newUser = new User();
-            newUser.setId(userId);
+            newUser.setId(id);
             user = userRepository.save(newUser);
         }
-        task.setCreator(user);
-        task.setReviser(user); //TODO: this needs to be sent by client
-        return taskRepository.save(task);
+        return user;
     }
+
 }

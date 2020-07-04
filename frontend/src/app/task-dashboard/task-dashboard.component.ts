@@ -33,7 +33,6 @@ export class TaskDashboardComponent implements OnInit {
   }
 
   getTasks(): void {
-    console.log("getTasks");
     this.taskService.getTasks()
       .subscribe(tasks =>{
         this.tasks = tasks;

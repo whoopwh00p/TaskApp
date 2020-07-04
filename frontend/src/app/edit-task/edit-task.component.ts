@@ -21,8 +21,8 @@ export class EditTaskComponent implements OnInit {
   dialogType: DialogType;
   task: Task;
   states:State[] = [State.TODO,State.IN_PROGRESS,State.DONE];
+  userNames: String[] = [];
   users: User[] = [];
-
   constructor(private formBuilder: FormBuilder, 
       private dialogRef: MatDialogRef<EditTaskComponent>,
       @Inject(MAT_DIALOG_DATA) data, 
@@ -35,14 +35,18 @@ export class EditTaskComponent implements OnInit {
         'name': '',
         'description': '',
         'state': State.TODO,
-        'assignee': null
+        'assigneeId': null,
+        'assigneeName': null
       };
       this.dialogType = DialogType.NEW;
     }
     else {
       this.task = data;
-      if(this.task.assignee === undefined) {
-        this.task.assignee = null;
+      if(this.task.assigneeId === undefined) {
+        this.task.assigneeId = null;
+      }
+      if(this.task.assigneeName === undefined) {
+        this.task.assigneeName = null;
       }
       //TODO: fix this workaround
       switch(data.state) {
@@ -62,7 +66,10 @@ export class EditTaskComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.formBuilder.group(this.task);
-    this.userService.getUser().subscribe(users =>  {
+    this.userService.getUsers().subscribe(users =>  {
+      for(let user of users) {
+        this.userNames.push(user.name);
+      }
       this.users = users;
     })
 
@@ -72,7 +79,14 @@ export class EditTaskComponent implements OnInit {
     if(this.dialogType == DialogType.NEW) {
       this.taskService.createTask(this.form.value);
     } else {
-      this.taskService.updateTask(this.form.value);
+      let updatedTask:Task  = this.form.value;
+      console.log(updatedTask.assigneeName);
+      if(!updatedTask.assigneeName === null) {
+        updatedTask.assigneeId = this.users.find(u => u.name == updatedTask.assigneeName).id;
+      } else {
+        updatedTask.assigneeId = null;
+      }
+      this.taskService.updateTask(updatedTask);
     }
     this.close();
   }

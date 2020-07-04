@@ -51,7 +51,6 @@ public class TaskController {
             })
     @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = TaskResponseDto.class))))
     public HttpResponse<List<TaskResponseDto>> getTasks(@PathVariable int projectId) {
-        LOGGER.info("getTasks called");
         return HttpResponse.ok(mapToTaskResponseDtos(taskRepository.findByProjectId(projectId)));
     }
 
@@ -85,7 +84,7 @@ public class TaskController {
     public HttpResponse<TaskResponseDto> createTask(@PathVariable int projectId, @Body @Valid TaskDto taskDto, Principal principal) {
         try {
             LOGGER.info("createTask called by {}", principal.getName());
-            Task task = taskService.createTask(mapToTask(taskDto, projectId), principal.getName());
+            Task task = taskService.createTask(mapToTask(taskDto, projectId), principal.getName(), taskDto.getAssigneeId());
             return HttpResponse.ok(mapToTaskResponseDto(task));
         } catch (Exception e) {
             LOGGER.warn("Could not save task", e);
@@ -104,11 +103,10 @@ public class TaskController {
     @ApiResponse(responseCode = "200", description = "The updated task", content = @Content(schema = @Schema(implementation = TaskResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "Given project-id does not exist")
     public HttpResponse<TaskResponseDto> updateTask(@PathVariable int projectId, @PathVariable int id, @Body @Valid TaskDto taskDto, Principal principal) {
-        LOGGER.info("update Task called {}, {}", id,taskDto);
         try {
             Task task = mapToTask(taskDto, projectId);
             task.setId(id);
-            Task updatedTask = taskRepository.update(task);
+            Task updatedTask = taskService.updateTask(task, taskDto.getAssigneeId());
             return HttpResponse.ok(mapToTaskResponseDto(updatedTask));
         } catch (Exception e) {
             LOGGER.warn("Could not save task", e);
@@ -162,6 +160,11 @@ public class TaskController {
         taskResponseDto.setName(task.getName());
         taskResponseDto.setProjectId(task.getProject().getId());
         taskResponseDto.setState(task.getState());
+        if(task.getAssignee() != null)
+        {
+            taskResponseDto.setAssigneeId(task.getAssignee().getId());
+            taskResponseDto.setAssigneeName(task.getAssignee().getName());
+        }
         return taskResponseDto;
     }
 }

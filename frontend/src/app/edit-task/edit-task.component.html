@@ -32,10 +32,10 @@
   <p>
     <mat-form-field appearance="standard">
         <mat-label>Assignee</mat-label>
-        <mat-select formControlName="assignee">
+        <mat-select formControlName="assigneeName" >
           <mat-option value=null>None</mat-option>
-          <mat-option *ngFor="let assignee of users" [value]="assignee">
-            {{assignee.name}}
+          <mat-option *ngFor="let assignee of userNames" [value]="assignee" >
+            {{assignee}}
           </mat-option>
         </mat-select>
       </mat-form-field>

@@ -45,7 +45,8 @@ export class TaskService {
     this.http.post<Task>(this.baseUrl+this.project.id+this.path, {
       'name': task.name,
       'description': task.description,
-      'state': task.state.toString()
+      'state': task.state.toString(),
+      'assigneeId': task.assigneeId
     }, {
       headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)
     }).pipe(
@@ -61,7 +62,8 @@ export class TaskService {
     this.http.put<Task>(this.baseUrl+this.project.id+this.path+task.id, {
       'name': task.name,
       'description': task.description,
-      'state': task.state.toString()
+      'state': task.state.toString(),
+      'assigneeId': task.assigneeId
     }, {
       headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)
     }).pipe(

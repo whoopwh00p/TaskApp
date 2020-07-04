@@ -6,6 +6,7 @@ export interface Task {
     name: String;
     description: String;
     state: State;
-    assignee: User;
+    assigneeId: String;
+    assigneeName: String;
   }
   
