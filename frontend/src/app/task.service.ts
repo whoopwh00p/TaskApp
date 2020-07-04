@@ -33,7 +33,7 @@ export class TaskService {
   getTasks(): Observable<Task[]> {
     return this.http.get<Task[]>(this.baseUrl+this.project.id+this.path,
       {
-        headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.getAccessToken()}`)
+        headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)
       })
           .pipe(
             tap(_ => this.log('fetched tasks')),
@@ -47,7 +47,7 @@ export class TaskService {
       'description': task.description,
       'state': task.state.toString()
     }, {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.getAccessToken()}`)
+      headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)
     }).pipe(
       tap(_ => {
         this.log('create task');

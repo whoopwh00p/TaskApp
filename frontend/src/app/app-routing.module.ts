@@ -7,7 +7,7 @@ import { ContentComponent } from './content/content.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'dashboard', component: ContentComponent},
+  { path: 'dashboard', component: ContentComponent, canActivate: [AuthGuard]},
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'callback', component: CallbackComponent }
 ];

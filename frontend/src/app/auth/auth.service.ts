@@ -26,12 +26,6 @@ export class AuthService {
     this.checkSession();
   }
 
-  getAccessToken() {
-    console.log("getAccessToken");
-    console.log(this.accessToken);
-    return "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImtoZDZONnpubkxGN0E5MmN5NFk2RCJ9.eyJpc3MiOiJodHRwczovL2Rldi1jZDNjZWJiay5ldS5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NWVkZDAwYTMzNDQxMzcwMDE0OThlNDg5IiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NDIwMCIsImh0dHBzOi8vZGV2LWNkM2NlYmJrLmV1LmF1dGgwLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE1OTM3OTg4MzIsImV4cCI6MTU5MzgwNjAzMiwiYXpwIjoiUFNLOW5hcjdEREpDaDkwcWlWUHJmMW84c2Q5WVBxMWQiLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIn0.vKx9BZm_FZ-5VZeSlftvSelI235wMIzWvQB1MGVgQdOrbr7NxYJE-5Qhfof9ak_WEDeyrEgwYe8ebu2pfmPhKz12Kr1fHoKZcRud7kk3vJlqNMI88xzD8uM1rAMnxLDv3Z6VN3uoBDtTI0EeUoh3t3Etuy9XTIRw0-LIMcNRoBeX5yDSmqb6_RzmCzdUb4Q7PWbEfs6_dDHFToUSRPJzKelv_2J6PRwdkbXh3PDsISh8wg_ezSuHtyuy3c8a8bA9xhgMbT6u2T8Oh6hRMEtfBBgP84KgF89jMcLjjkg_iTXDTJOCJCKm_85DQDu4mdebWNkRQEuAqt_YFadrqvaPYQ";
-  }
-
   getUserName() {
     return this.userProfile.email;
   }
@@ -45,11 +39,10 @@ export class AuthService {
     // When Auth0 hash parsed, get profile
     this.auth0.parseHash((err, authResult) => {
       if (authResult && authResult.accessToken) {
-        window.location.hash = '';
         this.getUserInfo(authResult);
-        this.router.navigate(['dashboard']);
       } else if (err) {
         console.error(`Error: ${err.error}`);
+        this.logout();
       }
     });
   }
@@ -80,6 +73,7 @@ export class AuthService {
     this.accessToken = authResult.accessToken;
     this.userProfile = profile;
     this.authenticated = true;
+    this.router.navigate(['dashboard']);
   }
 
   logout() {

@@ -25,7 +25,7 @@ export class ProjectService {
 
   getProjects(): Observable<Project[]> {
     return this.http.get<Project[]>(this.projectUrl, {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.getAccessToken()}`)
+      headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)
     })
         .pipe(
           tap(_ => this.log('fetched projects')),
