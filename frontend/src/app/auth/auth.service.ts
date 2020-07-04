@@ -39,12 +39,11 @@ export class AuthService {
     // When Auth0 hash parsed, get profile
     this.auth0.parseHash((err, authResult) => {
       if (authResult && authResult.accessToken) {
-        window.location.hash = '';
         this.getUserInfo(authResult);
       } else if (err) {
         console.error(`Error: ${err.error}`);
+        this.logout();
       }
-      this.router.navigate(['dashboard']);
     });
   }
 
@@ -68,10 +67,13 @@ export class AuthService {
 
   private _setSession(authResult, profile) {
     // Save authentication data and update login status subject
+    console.log("setSession");
+    console.log(authResult.accessToken);
     this.expiresAt = authResult.expiresIn * 1000 + Date.now();
     this.accessToken = authResult.accessToken;
     this.userProfile = profile;
     this.authenticated = true;
+    this.router.navigate(['dashboard']);
   }
 
   logout() {

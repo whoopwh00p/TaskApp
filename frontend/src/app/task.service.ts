@@ -5,6 +5,7 @@ import { Observable, of, Subject } from 'rxjs';
 import { Task } from './model/Task';
 import { ProjectService } from './project.service';
 import { Project } from './model/Project';
+import { AuthService } from './auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class TaskService {
 
   private _refreshNeeded$ = new Subject<void>();
 
-  constructor(private http: HttpClient, private projectService: ProjectService) { 
+  constructor(private http: HttpClient, private projectService: ProjectService, private authService: AuthService) { 
     this.projectService.refreshNeeded$.subscribe(result => {
       this.project = result;
       this._refreshNeeded$.next();
@@ -30,7 +31,10 @@ export class TaskService {
   }
 
   getTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(this.baseUrl+this.project.id+this.path)
+    return this.http.get<Task[]>(this.baseUrl+this.project.id+this.path,
+      {
+        headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)
+      })
           .pipe(
             tap(_ => this.log('fetched tasks')),
             catchError(this.handleError<Task[]>('getTasks', []))
@@ -41,7 +45,10 @@ export class TaskService {
     this.http.post<Task>(this.baseUrl+this.project.id+this.path, {
       'name': task.name,
       'description': task.description,
-      'state': task.state.toString()
+      'state': task.state.toString(),
+      'assigneeId': task.assigneeId
+    }, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)
     }).pipe(
       tap(_ => {
         this.log('create task');
@@ -55,7 +62,10 @@ export class TaskService {
     this.http.put<Task>(this.baseUrl+this.project.id+this.path+task.id, {
       'name': task.name,
       'description': task.description,
-      'state': task.state.toString()
+      'state': task.state.toString(),
+      'assigneeId': task.assigneeId
+    }, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)
     }).pipe(
       tap(_ => {
         this.log('update task');
@@ -66,7 +76,9 @@ export class TaskService {
   }
 
   deleteTask(task:Task) {
-    this.http.delete<Task>(this.baseUrl+this.project.id+this.path+task.id).pipe(
+    this.http.delete<Task>(this.baseUrl+this.project.id+this.path+task.id, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)
+    }).pipe(
       tap(_ => {
         this.log('delete task');
         this._refreshNeeded$.next();

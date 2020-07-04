@@ -35,4 +35,7 @@ public class TaskDto {
     @Schema(description = "the state of the task", example = "TODO")
     @Valid
     private TaskState state;
+
+    @Schema(description = "the id of the assignee", example = "1")
+    private String assigneeId;
 }

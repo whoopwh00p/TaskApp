@@ -6,8 +6,11 @@ import de.whoopwh00p.taskapp.exception.UnknownProjectException;
 import de.whoopwh00p.taskapp.model.Task;
 import de.whoopwh00p.taskapp.persistence.ProjectRepository;
 import de.whoopwh00p.taskapp.persistence.TaskRepository;
+import de.whoopwh00p.taskapp.service.TaskService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -19,21 +22,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Controller("/projects/{projectId}/tasks")
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class TaskController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskController.class);
 
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
+    private final TaskService taskService;
 
-    public TaskController(ProjectRepository projectRepository, TaskRepository taskRepository) {
+    public TaskController(ProjectRepository projectRepository, TaskRepository taskRepository, TaskService taskService) {
         this.projectRepository = projectRepository;
         this.taskRepository = taskRepository;
+        this.taskService = taskService;
     }
 
     @Get
@@ -44,7 +51,6 @@ public class TaskController {
             })
     @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = TaskResponseDto.class))))
     public HttpResponse<List<TaskResponseDto>> getTasks(@PathVariable int projectId) {
-        LOGGER.info("getTasks called");
         return HttpResponse.ok(mapToTaskResponseDtos(taskRepository.findByProjectId(projectId)));
     }
 
@@ -67,6 +73,7 @@ public class TaskController {
     }
 
     @Post
+    @Secured(SecurityRule.IS_AUTHENTICATED)
     @Operation(summary = "creates a new task",
             description = "creates a new task",
             parameters = {
@@ -74,10 +81,10 @@ public class TaskController {
             })
     @ApiResponse(responseCode = "200", description = "The created task", content = @Content(schema = @Schema(implementation = TaskResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "Given project-id does not exist")
-    public HttpResponse<TaskResponseDto> createTask(@PathVariable int projectId, @Body @Valid TaskDto taskDto) {
+    public HttpResponse<TaskResponseDto> createTask(@PathVariable int projectId, @Body @Valid TaskDto taskDto, Principal principal) {
         try {
-            LOGGER.info("createTask called");
-            Task task = taskRepository.save(mapToTask(taskDto, projectId));
+            LOGGER.info("createTask called by {}", principal.getName());
+            Task task = taskService.createTask(mapToTask(taskDto, projectId), principal.getName(), taskDto.getAssigneeId());
             return HttpResponse.ok(mapToTaskResponseDto(task));
         } catch (Exception e) {
             LOGGER.warn("Could not save task", e);
@@ -95,12 +102,11 @@ public class TaskController {
             })
     @ApiResponse(responseCode = "200", description = "The updated task", content = @Content(schema = @Schema(implementation = TaskResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "Given project-id does not exist")
-    public HttpResponse<TaskResponseDto> updateTask(@PathVariable int projectId, @PathVariable int id, @Body @Valid TaskDto taskDto) {
-        LOGGER.info("update Task called {}, {}", id,taskDto);
+    public HttpResponse<TaskResponseDto> updateTask(@PathVariable int projectId, @PathVariable int id, @Body @Valid TaskDto taskDto, Principal principal) {
         try {
             Task task = mapToTask(taskDto, projectId);
             task.setId(id);
-            Task updatedTask = taskRepository.update(task);
+            Task updatedTask = taskService.updateTask(task, taskDto.getAssigneeId());
             return HttpResponse.ok(mapToTaskResponseDto(updatedTask));
         } catch (Exception e) {
             LOGGER.warn("Could not save task", e);
@@ -154,6 +160,11 @@ public class TaskController {
         taskResponseDto.setName(task.getName());
         taskResponseDto.setProjectId(task.getProject().getId());
         taskResponseDto.setState(task.getState());
+        if(task.getAssignee() != null)
+        {
+            taskResponseDto.setAssigneeId(task.getAssignee().getId());
+            taskResponseDto.setAssigneeName(task.getAssignee().getName());
+        }
         return taskResponseDto;
     }
 }

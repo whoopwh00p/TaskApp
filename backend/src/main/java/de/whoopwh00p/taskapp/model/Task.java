@@ -1,5 +1,6 @@
 package de.whoopwh00p.taskapp.model;
 
+import com.sun.istack.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.Getter;
@@ -25,5 +26,13 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     private TaskState state;
+
+    @ManyToOne
+    @JoinColumn(name = "creator_id")
+    private User creator;
+
+    @ManyToOne
+    @JoinColumn(name = "assignee_id")
+    private User assignee;
 }
 

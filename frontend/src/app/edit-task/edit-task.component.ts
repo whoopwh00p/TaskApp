@@ -3,10 +3,12 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import {State} from '../model/State';
 import { TaskService } from '../task.service';
 import { Task } from '../model/Task';
+import { User } from '../model/User';
 import {MAT_DIALOG_DATA,MatDialogRef} from "@angular/material/dialog";
 
 import { ConfirmDialogModel, ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-edit-task',
@@ -19,19 +21,33 @@ export class EditTaskComponent implements OnInit {
   dialogType: DialogType;
   task: Task;
   states:State[] = [State.TODO,State.IN_PROGRESS,State.DONE];
-
-  constructor(private formBuilder: FormBuilder, private dialogRef: MatDialogRef<EditTaskComponent>, @Inject(MAT_DIALOG_DATA) data, private taskService: TaskService, public dialog: MatDialog) { 
+  userNames: String[] = [];
+  users: User[] = [];
+  constructor(private formBuilder: FormBuilder, 
+      private dialogRef: MatDialogRef<EditTaskComponent>,
+      @Inject(MAT_DIALOG_DATA) data, 
+      private taskService: TaskService, 
+      private userService: UserService,
+      public dialog: MatDialog) { 
     if(data == null) {
       this.task = {
         'id': 0,
         'name': '',
         'description': '',
-        'state': State.TODO
+        'state': State.TODO,
+        'assigneeId': null,
+        'assigneeName': null
       };
       this.dialogType = DialogType.NEW;
     }
     else {
       this.task = data;
+      if(this.task.assigneeId === undefined) {
+        this.task.assigneeId = null;
+      }
+      if(this.task.assigneeName === undefined) {
+        this.task.assigneeName = null;
+      }
       //TODO: fix this workaround
       switch(data.state) {
         case "TODO":
@@ -50,13 +66,27 @@ export class EditTaskComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.formBuilder.group(this.task);
+    this.userService.getUsers().subscribe(users =>  {
+      for(let user of users) {
+        this.userNames.push(user.name);
+      }
+      this.users = users;
+    })
+
   }
 
   submit(): void {
     if(this.dialogType == DialogType.NEW) {
       this.taskService.createTask(this.form.value);
     } else {
-      this.taskService.updateTask(this.form.value);
+      let updatedTask:Task  = this.form.value;
+      console.log(updatedTask.assigneeName);
+      if(!updatedTask.assigneeName === null) {
+        updatedTask.assigneeId = this.users.find(u => u.name == updatedTask.assigneeName).id;
+      } else {
+        updatedTask.assigneeId = null;
+      }
+      this.taskService.updateTask(updatedTask);
     }
     this.close();
   }

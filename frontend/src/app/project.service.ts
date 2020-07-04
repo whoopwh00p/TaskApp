@@ -4,6 +4,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { Observable, of, Subject } from 'rxjs';
 import { Project } from './model/Project';
 import { CookieService } from 'ngx-cookie-service';
+import { AuthService } from './auth/auth.service';
 
 
 @Injectable({
@@ -16,14 +17,16 @@ export class ProjectService {
   private _refreshNeeded$ = new Subject<Project>();
   private selectedProject: Project;
 
-  constructor(private http: HttpClient, private cookieService : CookieService) { }
+  constructor(private http: HttpClient, private cookieService : CookieService, private authService: AuthService) { }
 
   get refreshNeeded$() {
     return this._refreshNeeded$;
   }
 
   getProjects(): Observable<Project[]> {
-    return this.http.get<Project[]>(this.projectUrl)
+    return this.http.get<Project[]>(this.projectUrl, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)
+    })
         .pipe(
           tap(_ => this.log('fetched projects')),
           catchError(this.handleError<Project[]>('getProjects', []))
