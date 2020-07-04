@@ -3,10 +3,12 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import {State} from '../model/State';
 import { TaskService } from '../task.service';
 import { Task } from '../model/Task';
+import { User } from '../model/User';
 import {MAT_DIALOG_DATA,MatDialogRef} from "@angular/material/dialog";
 
 import { ConfirmDialogModel, ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-edit-task',
@@ -19,19 +21,29 @@ export class EditTaskComponent implements OnInit {
   dialogType: DialogType;
   task: Task;
   states:State[] = [State.TODO,State.IN_PROGRESS,State.DONE];
+  users: User[] = [];
 
-  constructor(private formBuilder: FormBuilder, private dialogRef: MatDialogRef<EditTaskComponent>, @Inject(MAT_DIALOG_DATA) data, private taskService: TaskService, public dialog: MatDialog) { 
+  constructor(private formBuilder: FormBuilder, 
+      private dialogRef: MatDialogRef<EditTaskComponent>,
+      @Inject(MAT_DIALOG_DATA) data, 
+      private taskService: TaskService, 
+      private userService: UserService,
+      public dialog: MatDialog) { 
     if(data == null) {
       this.task = {
         'id': 0,
         'name': '',
         'description': '',
-        'state': State.TODO
+        'state': State.TODO,
+        'assignee': null
       };
       this.dialogType = DialogType.NEW;
     }
     else {
       this.task = data;
+      if(this.task.assignee === undefined) {
+        this.task.assignee = null;
+      }
       //TODO: fix this workaround
       switch(data.state) {
         case "TODO":
@@ -50,6 +62,10 @@ export class EditTaskComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.formBuilder.group(this.task);
+    this.userService.getUser().subscribe(users =>  {
+      this.users = users;
+    })
+
   }
 
   submit(): void {

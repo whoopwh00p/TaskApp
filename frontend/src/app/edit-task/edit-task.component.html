@@ -28,7 +28,18 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-    </p> 
-      <button *ngIf="dialogType==dialogTypeEnum.EDIT" mat-raised-button color="warn" type="button" (click)="delete()">Delete</button>
-      <button class="right" mat-raised-button type="submit" color="primary" [disabled]="!form.valid">Save</button>
+  </p> 
+  <p>
+    <mat-form-field appearance="standard">
+        <mat-label>Assignee</mat-label>
+        <mat-select formControlName="assignee">
+          <mat-option value=null>None</mat-option>
+          <mat-option *ngFor="let assignee of users" [value]="assignee">
+            {{assignee.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+  </p> 
+  <button *ngIf="dialogType==dialogTypeEnum.EDIT" mat-raised-button color="warn" type="button" (click)="delete()">Delete</button>
+  <button class="right" mat-raised-button type="submit" color="primary" [disabled]="!form.valid">Save</button>
 </form>

@@ -11,7 +11,7 @@ public class User {
     @Id
     private String id;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Project> projects;
 
     private String name;

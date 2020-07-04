@@ -8,6 +8,8 @@ import de.whoopwh00p.taskapp.persistence.ProjectRepository;
 import de.whoopwh00p.taskapp.persistence.UserRepository;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -25,6 +27,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller("/users")
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class UserController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 

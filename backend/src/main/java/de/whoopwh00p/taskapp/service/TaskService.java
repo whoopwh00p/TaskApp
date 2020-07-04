@@ -34,6 +34,7 @@ public class TaskService {
             user = userRepository.save(newUser);
         }
         task.setCreator(user);
+        task.setReviser(user); //TODO: this needs to be sent by client
         return taskRepository.save(task);
     }
 }

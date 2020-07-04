@@ -62,6 +62,8 @@ export class TaskService {
       'name': task.name,
       'description': task.description,
       'state': task.state.toString()
+    }, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)
     }).pipe(
       tap(_ => {
         this.log('update task');
@@ -72,7 +74,9 @@ export class TaskService {
   }
 
   deleteTask(task:Task) {
-    this.http.delete<Task>(this.baseUrl+this.project.id+this.path+task.id).pipe(
+    this.http.delete<Task>(this.baseUrl+this.project.id+this.path+task.id, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)
+    }).pipe(
       tap(_ => {
         this.log('delete task');
         this._refreshNeeded$.next();

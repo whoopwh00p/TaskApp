@@ -30,5 +30,9 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private User creator;
+
+    @ManyToOne
+    @JoinColumn(name = "reviser_id")
+    private User reviser;
 }
 
