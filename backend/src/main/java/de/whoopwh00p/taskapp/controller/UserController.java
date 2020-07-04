@@ -50,7 +50,7 @@ public class UserController {
             parameters = @Parameter(in = ParameterIn.PATH, name = "id", description = "the id of the user", required = true, example = "1"))
     @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserResponseDto.class)))
     @ApiResponse(responseCode = "404", description = "User does not exist")
-    public HttpResponse<UserResponseDto> getUserById(@PathVariable int id) {
+    public HttpResponse<UserResponseDto> getUserById(@PathVariable String id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             return HttpResponse.ok(mapToUserResponseDto(user.get()));
@@ -80,7 +80,7 @@ public class UserController {
             parameters = @Parameter(description = "the id of the user", example = "1"))
     @ApiResponse(responseCode = "200", description = "The updated user", content = @Content(schema = @Schema(implementation = UserResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "Given owner-id does not exist")
-    public HttpResponse<UserResponseDto> updateUser(@PathVariable int id, @Body @Valid UserDto userDto) {
+    public HttpResponse<UserResponseDto> updateUser(@PathVariable String id, @Body @Valid UserDto userDto) {
         try {
             User user = mapToUser(userDto);
             user.setId(id);

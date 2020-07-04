@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 public class ProjectDto {
     @NotNull
     @Schema(description = "The ID of the owner (user)", example = "1")
-    private int ownerId;
+    private String ownerId;
 
     @Schema(description = "Short name of the project.", example = "MFP")
     @NotEmpty

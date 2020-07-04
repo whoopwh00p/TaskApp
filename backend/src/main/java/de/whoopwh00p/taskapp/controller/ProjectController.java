@@ -1,6 +1,5 @@
 package de.whoopwh00p.taskapp.controller;
 
-import com.nimbusds.jwt.JWTClaimsSet;
 import de.whoopwh00p.taskapp.controller.dto.ProjectDto;
 import de.whoopwh00p.taskapp.controller.dto.ProjectResponseDto;
 import de.whoopwh00p.taskapp.exception.UnknownUserException;
@@ -8,13 +7,10 @@ import de.whoopwh00p.taskapp.model.Project;
 import de.whoopwh00p.taskapp.persistence.ProjectRepository;
 import de.whoopwh00p.taskapp.persistence.TaskRepository;
 import de.whoopwh00p.taskapp.persistence.UserRepository;
-import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.authentication.AuthenticationRequest;
 import io.micronaut.security.rules.SecurityRule;
-import io.micronaut.security.token.jwt.validator.AuthenticationJWTClaimsSetAdapter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -51,7 +47,6 @@ public class ProjectController {
             description = "gets all projects")
     @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProjectResponseDto.class))))
     public HttpResponse<List<ProjectResponseDto>> getProjects(Principal principal) {
-        LOGGER.info("Principal {}", principal.getName());
         List<Project> projects = (List<Project>) projectRepository.findAll();
         return HttpResponse.ok(mapToProjectResponseDtos(projects));
     }
@@ -75,16 +70,12 @@ public class ProjectController {
     @Operation(summary = "creates a new project",
             description = "creates a new project")
     @ApiResponse(responseCode = "200", description = "The created project", content = @Content(schema = @Schema(implementation = ProjectResponseDto.class)))
-    @ApiResponse(responseCode = "400", description = "Given owner-id does not exist")
     @ApiResponse(responseCode = "500", description = "unexpected error occurred")
     public HttpResponse<ProjectResponseDto> createProject(@Body @Valid ProjectDto projectDto) {
         try {
             Project project = projectRepository.save(mapToProject(projectDto));
             return HttpResponse.ok(mapToProjectResponseDto(project));
-        } catch (UnknownUserException e) {
-            LOGGER.warn("Could not save project", e);
-            return HttpResponse.badRequest();
-        } catch (Exception e) {
+        }  catch (Exception e) {
             LOGGER.error("Unexpected error occurred", e);
             return HttpResponse.serverError();
         }
@@ -103,9 +94,6 @@ public class ProjectController {
             project.setId(id);
             Project updatedProject = projectRepository.update(project);
             return HttpResponse.ok(mapToProjectResponseDto(updatedProject));
-        } catch (UnknownUserException e) {
-            LOGGER.warn("Could not save project", e);
-            return HttpResponse.badRequest();
         } catch (Exception e) {
             LOGGER.error("Unexpected error occurred", e);
             return HttpResponse.serverError();
@@ -128,11 +116,10 @@ public class ProjectController {
         }
     }
 
-    private Project mapToProject(ProjectDto projectDto) throws UnknownUserException {
+    private Project mapToProject(ProjectDto projectDto) {
         Project project = new Project();
         project.setName(projectDto.getName());
         project.setShortName(projectDto.getShortName());
-        project.setOwner(userRepository.findById(projectDto.getOwnerId()).orElseThrow(() -> new UnknownUserException("No user with this id exists")));
         return project;
     }
 
@@ -151,7 +138,6 @@ public class ProjectController {
         ProjectResponseDto projectResponseDto = new ProjectResponseDto();
         projectResponseDto.setId(project.getId());
         projectResponseDto.setName(project.getName());
-        projectResponseDto.setOwnerId(project.getOwner().getId());
         projectResponseDto.setShortName(project.getShortName());
         return projectResponseDto;
     }
