@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
-import { Observable, of, Subject } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { User } from './model/User';
-import { Project } from './model/Project';
-import { AuthService } from './auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,22 +12,57 @@ export class UserService {
 
   private baseUrl = 'http://localhost:8080';  
   private path = '/users'
-  private project: Project;
+  private accessToken: String;
+  private userName: String;
+  private users: User[];
 
-  private _refreshNeeded$ = new Subject<void>();
+  constructor(private http: HttpClient) { 
+    
+  }
 
-  constructor(private http: HttpClient, private authService: AuthService) { 
+  public setUserInformation(userName: String, userId: String, accessToken: String) {
+    this.userName = userName;
+    this.accessToken = accessToken;
+    this.getUsers().subscribe(users => {
+      if(this.users == null || this.users == undefined) {
+        this.users = users;
+        if(!this.userExists(userName)) {
+          console.log(userName+" does not exist");
+          this.createUser(userName,userId).subscribe(result => console.log(userName+" created"));
+        }
+      }
+    });
+
+  }
+
+  private userExists(userName: String):boolean {
+    return this.users.find(u => u.name == userName) != null;
+  }
+
+  private createUser(userName: String, userId: String) {
+    let newUser: User = {
+      'id': userId,
+      'name': userName
+    } 
+    return this.http.post<User>(this.baseUrl+this.path, newUser,
+      {
+        headers: new HttpHeaders().set('Authorization', `Bearer ${this.accessToken}`)
+      })
+        .pipe(
+          tap(_ => this.log('fetched tasks')),
+          catchError(this.handleError<User[]>('getUser', []))
+      );
   }
 
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.baseUrl+this.path,
       {
-        headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)
+        headers: new HttpHeaders().set('Authorization', `Bearer ${this.accessToken}`)
       })
-          .pipe(
-            tap(_ => this.log('fetched tasks')),
-            catchError(this.handleError<User[]>('getUser', []))
-          );
+        .pipe(
+          tap(_ => this.log('fetched tasks')),
+          catchError(this.handleError<User[]>('getUser', []))
+      );
   }
 
   /**

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import * as auth0 from 'auth0-js';
 import { environment } from './../../environments/environment';
 import { Router } from '@angular/router';
-
+import { UserService } from '../user.service';
 (window as any).global = window;
 
 @Injectable()
@@ -22,9 +22,11 @@ export class AuthService {
   accessToken: string;
   authenticated: boolean;
 
-  constructor(private router: Router) {
+
+  constructor(private router: Router, private userService: UserService) {
     this.checkSession();
   }
+
 
   getUserName() {
     return this.userProfile.email;
@@ -48,7 +50,6 @@ export class AuthService {
   }
 
   checkSession() {
-
     this.auth0.checkSession({}, (err, authResult) => {
       if (authResult && authResult.accessToken) {
         this.getUserInfo(authResult);
@@ -67,12 +68,11 @@ export class AuthService {
 
   private _setSession(authResult, profile) {
     // Save authentication data and update login status subject
-    console.log("setSession");
-    console.log(authResult.accessToken);
     this.expiresAt = authResult.expiresIn * 1000 + Date.now();
     this.accessToken = authResult.accessToken;
     this.userProfile = profile;
     this.authenticated = true;
+    this.userService.setUserInformation(this.userProfile.email, this.userProfile.sub,this.accessToken);
     this.router.navigate(['dashboard']);
   }
 

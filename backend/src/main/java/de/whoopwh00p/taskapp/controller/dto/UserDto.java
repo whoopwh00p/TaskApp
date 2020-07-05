@@ -16,6 +16,10 @@ import java.util.Set;
 @EqualsAndHashCode(exclude = "projectIds")
 @Introspected
 public class UserDto {
+    @Schema(description = "the id of the user", example = "1")
+    @NotEmpty
+    private String id;
+
     @ArraySchema(schema = @Schema(example = "1"))
     private Set<Integer> projectIds;
 
