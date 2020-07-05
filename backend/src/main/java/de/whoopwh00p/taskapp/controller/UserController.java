@@ -97,6 +97,7 @@ public class UserController {
 
     private User mapToUser(UserDto userDto) {
         User user = new User();
+        user.setId(userDto.getId());
         user.setName(userDto.getName());
         if (userDto.getProjectIds() != null) {
             List<Project> projects = new ArrayList<>();
@@ -120,7 +121,9 @@ public class UserController {
         UserResponseDto userResponseDto = new UserResponseDto();
         userResponseDto.setId(user.getId());
         userResponseDto.setName(user.getName());
-        userResponseDto.setProjectIds(user.getProjects().stream().map(Project::getId).collect(Collectors.toList()));
+        if(user.getProjects() != null && !user.getProjects().isEmpty()) {
+            userResponseDto.setProjectIds(user.getProjects().stream().map(Project::getId).collect(Collectors.toList()));
+        }
         return userResponseDto;
     }
 }

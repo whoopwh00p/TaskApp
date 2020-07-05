@@ -80,8 +80,7 @@ export class EditTaskComponent implements OnInit {
       this.taskService.createTask(this.form.value);
     } else {
       let updatedTask:Task  = this.form.value;
-      console.log(updatedTask.assigneeName);
-      if(!updatedTask.assigneeName === null) {
+      if(updatedTask.assigneeName != null && updatedTask.assigneeName != undefined && updatedTask.assigneeName != "null") {
         updatedTask.assigneeId = this.users.find(u => u.name == updatedTask.assigneeName).id;
       } else {
         updatedTask.assigneeId = null;
