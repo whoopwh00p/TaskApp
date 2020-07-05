@@ -21,6 +21,7 @@ import { ActionBarComponent } from './action-bar/action-bar.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { LoginComponent } from './login/login.component';
 import { ContentComponent } from './content/content.component';
+import { EditProjectComponent } from './edit-project/edit-project.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,7 +34,8 @@ import { ContentComponent } from './content/content.component';
     ActionBarComponent,
     ConfirmDialogComponent,
     LoginComponent,
-    ContentComponent
+    ContentComponent,
+    EditProjectComponent
   ],
   imports: [
     BrowserModule,

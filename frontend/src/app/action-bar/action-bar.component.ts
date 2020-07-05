@@ -6,6 +6,7 @@ import { CookieService } from 'ngx-cookie-service';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import { TaskdialogComponent } from '../taskdialog/taskdialog.component';
 import { EditTaskComponent } from '../edit-task/edit-task.component';
+import { EditProjectComponent } from '../edit-project/edit-project.component';
 @Component({
   selector: 'app-action-bar',
   templateUrl: './action-bar.component.html',
@@ -40,6 +41,13 @@ export class ActionBarComponent implements OnInit {
     config.width = "80%";
     config.disableClose = true;
     const dialogRef = this.dialog.open(EditTaskComponent, config);
+  }
+
+  openCreateProjectDialog() {
+    const config = new MatDialogConfig();
+    config.width = "80%";
+    config.disableClose = true;
+    const dialogRef = this.dialog.open(EditProjectComponent, config);
   }
 
   private findProjectById(id:Number) : Project {

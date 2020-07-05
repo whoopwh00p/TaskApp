@@ -16,4 +16,9 @@ public class Project {
     private String shortName;
 
     private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "creator_id")
+    private User creator;
+
 }

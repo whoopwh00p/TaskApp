@@ -1,0 +1,23 @@
+<div class="right">
+    <button mat-fab color="primary" (click)="close()"><mat-icon>close</mat-icon></button>
+  </div>
+  <div [ngSwitch]="dialogType">
+      <h1 *ngSwitchCase="dialogTypeEnum.NEW">Create a new project</h1>
+      <h1 *ngSwitchCase="dialogTypeEnum.EDIT">Edit project</h1>
+  </div>
+  
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <p>
+      <mat-form-field appearance="standard" style="width: 80%;">
+        <mat-label>Project Name</mat-label>
+        <input required matInput placeholder="enter a project name" formControlName="name" cdkFocusInitial maxlength=20 minlength=4>
+      </mat-form-field>
+      <mat-form-field appearance="standard" style="width: 80%;">
+        <mat-label>Project Short-Name</mat-label>
+        <input required matInput placeholder="enter a project short name" formControlName="shortName" maxlength=3 minlength=2>
+      </mat-form-field>
+    </p>
+    <button *ngIf="dialogType==dialogTypeEnum.EDIT" mat-raised-button color="warn" type="button" (click)="delete()">Delete</button>
+    <button class="right" mat-raised-button type="submit" color="primary" [disabled]="!form.valid">Save</button>
+  </form>
+  

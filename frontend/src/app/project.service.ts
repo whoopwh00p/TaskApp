@@ -23,6 +23,19 @@ export class ProjectService {
     return this._refreshNeeded$;
   }
 
+  createProject(project:Project) {
+
+  }
+
+  updateProject(project:Project) {
+    
+  }
+
+  deleteProject(project:Project) {
+    
+  }
+
+
   getProjects(): Observable<Project[]> {
     return this.http.get<Project[]>(this.projectUrl, {
       headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)

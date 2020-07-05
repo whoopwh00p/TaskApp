@@ -7,6 +7,7 @@ import de.whoopwh00p.taskapp.model.Project;
 import de.whoopwh00p.taskapp.persistence.ProjectRepository;
 import de.whoopwh00p.taskapp.persistence.TaskRepository;
 import de.whoopwh00p.taskapp.persistence.UserRepository;
+import de.whoopwh00p.taskapp.service.ProjectService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
@@ -35,11 +36,13 @@ public class ProjectController {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
+    private final ProjectService projectService;
 
-    public ProjectController(ProjectRepository projectRepository, UserRepository userRepository, TaskRepository taskRepository) {
+    public ProjectController(ProjectRepository projectRepository, UserRepository userRepository, TaskRepository taskRepository, ProjectService projectService) {
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
         this.taskRepository = taskRepository;
+        this.projectService = projectService;
     }
 
     @Get
@@ -71,9 +74,9 @@ public class ProjectController {
             description = "creates a new project")
     @ApiResponse(responseCode = "200", description = "The created project", content = @Content(schema = @Schema(implementation = ProjectResponseDto.class)))
     @ApiResponse(responseCode = "500", description = "unexpected error occurred")
-    public HttpResponse<ProjectResponseDto> createProject(@Body @Valid ProjectDto projectDto) {
+    public HttpResponse<ProjectResponseDto> createProject(@Body @Valid ProjectDto projectDto, Principal principal) {
         try {
-            Project project = projectRepository.save(mapToProject(projectDto));
+            Project project = projectService.createProject(mapToProject(projectDto), principal.getName());
             return HttpResponse.ok(mapToProjectResponseDto(project));
         }  catch (Exception e) {
             LOGGER.error("Unexpected error occurred", e);
