@@ -50,6 +50,14 @@ export class ActionBarComponent implements OnInit {
     const dialogRef = this.dialog.open(EditProjectComponent, config);
   }
 
+  openEditProjectDialog() {
+    const config = new MatDialogConfig();
+    config.width = "80%";
+    config.disableClose = true;
+    config.data = this.selectedProject;
+    const dialogRef = this.dialog.open(EditProjectComponent, config);
+  }
+
   private findProjectById(id:Number) : Project {
     for(let project of this.projects) {
       if(project.id == id) {

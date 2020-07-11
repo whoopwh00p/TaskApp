@@ -24,11 +24,33 @@ export class ProjectService {
   }
 
   createProject(project:Project) {
-
+    this.http.post<Project>(this.projectUrl, {
+      'name': project.name,
+      'shortName': project.shortName
+    }, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)
+    }).pipe(
+      tap(_ => {
+        this.log('create project');
+        this._refreshNeeded$.next();
+      }),
+      catchError(this.handleError<Project>('create project'))
+    ).subscribe();
   }
 
   updateProject(project:Project) {
-    
+    this.http.put<Project>(this.projectUrl+project.id, {
+      'name': project.name,
+      'shortName': project.shortName
+    }, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)
+    }).pipe(
+      tap(_ => {
+        this.log('update project');
+        this._refreshNeeded$.next();
+      }),
+      catchError(this.handleError<Project>('update project'))
+    ).subscribe();
   }
 
   deleteProject(project:Project) {

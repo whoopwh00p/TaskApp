@@ -10,6 +10,19 @@ micronaut:
           jwks:
             auth0:
               url: 'https://dev-cd3cebbk.eu.auth0.com/.well-known/jwks.json'
+    intercept-url-map:
+      - pattern: /swagger/**
+        access:
+          - isAnonymous()
+      - pattern: /swagger-ui/**
+        access:
+          - isAnonymous()
+      - pattern: /rapidoc/**
+        access:
+          - isAnonymous()
+      - pattern: /redoc/**
+        access:
+          - isAnonymous()``
   openapi:
     views:
       spec:
